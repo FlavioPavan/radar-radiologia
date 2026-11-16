@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Monitor de concursos e processos seletivos para Tecnólogo e Técnico em Radiologia em São Paulo, Grande ABCD e Litoral.">
+<meta name="theme-color" content="#070b14">
+<title>Radar Radiologia SP – Concursos e Vagas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070b14'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%234fd1e8' stroke-width='2'/%3E%3Cpath d='M16 16 24 10' stroke='%234fd1e8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode: 'class', theme: { extend: {
+  colors: { ink: '#070b14', panel: '#0d1422', line: '#1a2438', rx: { 300: '#8fe3f2', 400: '#4fd1e8', 500: '#22b8d3', 600: '#0e93ad' } },
+  fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'], display: ['Sora', 'Manrope', 'sans-serif'] }
+}}}
+</script>
+<style>
+  :focus-visible { outline: 2px solid #4fd1e8; outline-offset: 2px; }
+  dialog::backdrop { background: rgba(7,11,20,.8); backdrop-filter: blur(4px); }
+  dialog[open] { animation: pop .18s ease-out; }
+  @keyframes pop { from { opacity: 0; transform: scale(.97); } }
+  @keyframes scan { 0%,100% { transform: translateY(0); } 50% { transform: translateY(190px); } }
+  .scanline { animation: scan 5s ease-in-out infinite; }
+  .skeleton { background: linear-gradient(90deg,#0d1422 25%,#16213a 50%,#0d1422 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
+  @keyframes sh { to { background-position: -200% 0; } }
+  @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body class="bg-ink text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-rx-500 selection:text-ink">
+
+<header class="bg-panel/90 backdrop-blur border-b border-line sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="p-2 rounded-xl bg-rx-500/10 border border-rx-500/30 text-rx-400" aria-hidden="true">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 12 19 6"/></svg>
+      </div>
+      <div>
+        <h1 class="font-display text-lg font-bold leading-tight">Radar Radiologia SP</h1>
+        <p class="text-xs text-slate-400 hidden sm:block">Concursos e vagas para Tecnólogo e Técnico em Radiologia</p>
+      </div>
+    </div>
+    <button id="keyBtn" type="button" class="flex items-center gap-2 text-xs bg-line/60 hover:bg-line border border-line px-3 py-2 rounded-xl transition font-semibold">
+      <span id="keyDot" class="w-2 h-2 rounded-full bg-amber-500"></span><span id="keyText">Configurar chave</span>
+    </button>
+  </div>
+</header>
+
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-panel via-[#0a1830] to-[#06222c]">
+    <div class="grid md:grid-cols-[1fr_300px] items-center gap-4 p-6 sm:p-10">
+      <div class="space-y-5 relative z-10">
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold leading-tight max-w-xl">Concursos e vagas de radiologia, sempre atualizados</h2>
+        <p class="text-slate-300 max-w-lg">A cada visita o app busca na web o que está aberto hoje na capital, no Grande ABCD e no litoral. O que encerra sai da lista sozinho.</p>
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="searchBtn" type="button" class="bg-rx-500 hover:bg-rx-400 disabled:opacity-60 disabled:cursor-wait text-ink px-5 py-3 rounded-xl font-bold shadow-lg shadow-rx-500/20 transition flex items-center gap-2">
+            <svg id="searchIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.3-4.3M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
+            <span id="searchBtnText">Atualizar agora</span>
+          </button>
+          <span id="lastScan" class="text-xs text-slate-400"></span>
+        </div>
+      </div>
+      <svg id="xray" viewBox="0 0 240 240" class="w-56 md:w-full mx-auto opacity-90" aria-hidden="true"></svg>
+    </div>
+    <dl class="grid grid-cols-3 border-t border-line bg-ink/40 text-center">
+      <div class="py-4"><dd id="stTotal" class="font-display text-2xl font-bold">0</dd><dt class="text-xs text-slate-400">oportunidades monitoradas</dt></div>
+      <div class="py-4 border-x border-line"><dd id="stOpen" class="font-display text-2xl font-bold text-emerald-400">0</dd><dt class="text-xs text-slate-400">abertos ou em andamento</dt></div>
+      <div class="py-4"><dd id="stFav" class="font-display text-2xl font-bold text-amber-400">0</dd><dt class="text-xs text-slate-400">favoritos</dt></div>
+    </dl>
+  </section>
+
+  <!-- FILTROS -->
+  <section class="bg-panel border border-line rounded-2xl p-5 space-y-4" aria-label="Filtros">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <label class="block text-xs font-semibold text-slate-400">Órgão ou cargo
+        <input id="q" type="search" placeholder="Ex.: USP, EBSERH, FIDI" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:border-rx-500 focus:outline-none">
+      </label>
+      <label class="block text-xs font-semibold text-slate-400">Região
+        <select id="region" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:border-rx-500 focus:outline-none">
+          <option value="all">Todas as regiões</option><option value="Capital">São Paulo capital</option><option value="ABCD">Grande ABCD</option><option value="Litoral">Litoral paulista</option>
+        </select>
+      </label>
+      <label class="block text-xs font-semibold text-slate-400">Cargo
+        <select id="role" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:border-rx-500 focus:outline-none">
+          <option value="all">Todos os cargos</option><option value="Tecnólogo">Tecnólogo em Radiologia</option><option value="Técnico">Técnico em Radiologia</option>
+        </select>
+      </label>
+    </div>
+    <div class="flex flex-wrap items-center gap-2" id="chips" role="group" aria-label="Situação"></div>
+  </section>
+
+  <div id="resultInfo" class="flex items-center justify-between text-sm text-slate-400"></div>
+  <div id="grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" aria-live="polite"></div>
+</main>
+
+<footer class="border-t border-line bg-panel py-6 text-center text-xs text-slate-500 px-4">
+  Confirme sempre datas, requisitos e se a vaga continua aberta no site oficial. Resultados encontrados pela IA podem conter erros.
+</footer>
+
+<div id="toasts" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 space-y-2 sm:w-96" aria-live="polite"></div>
+
+<!-- MODAL -->
+<dialog id="cfg" class="bg-panel text-slate-100 border border-line rounded-2xl w-[calc(100%-2rem)] max-w-md p-0 m-auto shadow-2xl">
+  <form method="dialog" id="cfgForm" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-4">
+      <h3 class="font-display text-lg font-bold">Chave da API Gemini</h3>
+      <button value="cancel" aria-label="Fechar" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+    </div>
+    <p class="text-sm text-slate-400 leading-relaxed">A busca usa o Gemini com pesquisa no Google. Sua chave fica salva só neste navegador e é enviada apenas ao Google. Nunca coloque a chave dentro do código publicado no GitHub.</p>
+    <label class="block text-xs font-semibold text-slate-300">Chave de API
+      <input id="keyInput" type="password" autocomplete="off" placeholder="AIzaSy..." class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm focus:border-rx-500 focus:outline-none">
+    </label>
+    <p class="text-xs text-slate-500">Gere uma chave gratuita em <a class="text-rx-400 underline" target="_blank" rel="noopener noreferrer" href="https://aistudio.google.com/app/apikey">aistudio.google.com</a>.</p>
+    <div class="flex items-center justify-between pt-2">
+      <button type="button" id="keyClear" class="text-xs text-rose-400 hover:text-rose-300 px-2 py-2">Remover chave</button>
+      <button type="submit" value="save" class="bg-rx-500 hover:bg-rx-400 text-ink text-sm font-bold px-5 py-2.5 rounded-xl transition">Salvar chave</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const KEY = 'gemini_api_key_radar', FAV = 'radar_favs_v2', LIVE = 'radar_live_v2', SCAN = 'radar_scan_v2';
+  const STATUS = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
+  const BADGE = {
+    Aberto: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    Andamento: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
+    Previsto: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    Monitoramento: 'bg-violet-500/15 text-violet-300 border-violet-500/30'
+  };
+  const REGION_LABEL = { Capital: 'São Paulo capital', ABCD: 'Grande ABCD', Litoral: 'Litoral paulista' };
+
+  // Base fixa no código: atualiza a cada deploy. Favoritos e achados da IA ficam separados no navegador.
+  const BASE = [
+    { id: 'usp-fuvest', orgao: 'Universidade de São Paulo (USP)', cargo: 'Técnico em Radiologia (Odontologia / Veterinária)', banca: 'FUVEST', salario: 'R$ 6.027,72 (CLT)', regiao: 'Capital', prazo: 'Em andamento (provas práticas)', status: 'Andamento', link: 'https://www.fuvest.br/tecnico-radiologia/' },
+    { id: 'ebserh-hsp', orgao: 'EBSERH / Hospital São Paulo (UNIFESP)', cargo: 'Tecnólogo / Técnico em Radiologia', banca: 'IBFC / FGV', salario: 'R$ 4.500,00 a R$ 6.500,00 (média)', regiao: 'Capital', prazo: 'Cadastro reserva, alerta permanente', status: 'Monitoramento', link: 'https://www.ebserh.gov.br' },
+    { id: 'fidi-iamspe', tipo: 'Vaga', orgao: 'FIDI / IAMSPE (Vila Mariana)', cargo: 'Tecnólogo(a) em Radiologia – Ressonância', banca: 'Seleção interna / Gupy', salario: 'Compatível com o mercado + benefícios', regiao: 'Capital', prazo: 'Aberto para vagas e estágio', status: 'Aberto', link: 'https://fidi.gupy.io/' },
+    { id: 'abcd-prefeituras', orgao: 'Prefeituras do Grande ABCD (Santo André, SBC, Diadema)', cargo: 'Técnico / Tecnólogo em Radiologia municipal', banca: 'VUNESP / IBAM', salario: 'R$ 3.300,00 a R$ 5.200,00', regiao: 'ABCD', prazo: 'Editais previstos para o semestre', status: 'Previsto', link: 'https://www.vunesp.com.br' }
+  ];
+
+  const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+  const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { toast('Não foi possível salvar neste navegador.', 'err'); } };
+
+  const state = {
+    live: load(LIVE, []),
+    favs: new Set(load(FAV, ['usp-fuvest', 'fidi-iamspe'])),
+    q: '', region: 'all', role: 'all', status: 'all', tipo: 'all', onlyFav: false, busy: false, remote: [], remoteTs: 0
+  };
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const safeUrl = u => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch { return ''; } };
+  const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  const initials = s => String(s).replace(/\(.*?\)/g, '').split(/[\s/–-]+/).filter(w => w.length > 2 && /^[A-ZÀ-Ú]/.test(w)).slice(0, 2).map(w => w[0]).join('') || 'ED';
+
+  /* ---------- Ilustrações (SVG inline, sem dependências externas) ---------- */
+  function drawXray() {
+    let ribs = '';
+    for (let i = 0; i < 7; i++) {
+      const y = 62 + i * 19, w = 34 + (i < 4 ? i * 13 : (6 - i) * 11 + 28);
+      ribs += `<path d="M120 ${y} Q${120 - w} ${y - 14} ${120 - w - 8} ${y + 20}M120 ${y} Q${120 + w} ${y - 14} ${120 + w + 8} ${y + 20}" />`;
+    }
+    let spine = '';
+    for (let i = 0; i < 11; i++) spine += `<rect x="114" y="${40 + i * 15}" width="12" height="10" rx="3"/>`;
+    $('#xray').innerHTML = `
+      <defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#4fd1e8" stop-opacity=".35"/><stop offset="1" stop-color="#4fd1e8" stop-opacity="0"/></radialGradient>
+      <clipPath id="c"><rect x="10" y="10" width="220" height="220" rx="22"/></clipPath></defs>
+      <rect x="10" y="10" width="220" height="220" rx="22" fill="#06101d" stroke="#1a2438"/>
+      <circle cx="120" cy="120" r="110" fill="url(#g)"/>
+      <g clip-path="url(#c)">
+        <g fill="none" stroke="#8fe3f2" stroke-opacity=".75" stroke-width="4" stroke-linecap="round">${ribs}</g>
+        <g fill="#8fe3f2" fill-opacity=".85">${spine}</g>
+        <path d="M70 215 Q120 180 170 215" fill="none" stroke="#8fe3f2" stroke-opacity=".5" stroke-width="6"/>
+        <rect class="scanline" x="10" y="25" width="220" height="3" fill="#4fd1e8" opacity=".9"/>
+      </g>`;
+  }
+
+  function cover(r, id) {
+    const g = `<defs><linearGradient id="cg${id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0e93ad" stop-opacity=".55"/><stop offset="1" stop-color="#0d1422"/></linearGradient></defs><rect width="400" height="96" fill="url(#cg${id})"/>`;
+    let art = '';
+    if (r === 'Capital') { // skyline
+      [[20,40,26],[52,22,30],[88,52,22],[116,14,34],[156,36,26],[188,26,28],[222,48,24],[252,18,32],[290,40,26],[322,28,30],[358,50,22]]
+        .forEach(([x, y, w]) => art += `<rect x="${x}" y="${96 - (96 - y) * 0.9}" width="${w}" height="96" fill="#8fe3f2" fill-opacity=".16"/>`);
+    } else if (r === 'ABCD') { // distrito industrial
+      [30, 120, 210, 300].forEach(x => art += `<path d="M${x} 96V56l26 14V50l26 14V40h14v56z" fill="#8fe3f2" fill-opacity=".18"/><rect x="${x + 60}" y="22" width="9" height="40" fill="#8fe3f2" fill-opacity=".18"/>`);
+    } else if (r === 'Litoral') { // ondas
+      for (let i = 0; i < 3; i++) art += `<path d="M0 ${52 + i * 16} q25 -14 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 V96H0z" fill="#8fe3f2" fill-opacity="${0.1 + i * .05}"/>`;
+    }
+    return `<svg viewBox="0 0 400 96" preserveAspectRatio="xMidYMid slice" class="w-full h-full" aria-hidden="true">${g}${art}</svg>`;
+  }
+
+  /* ---------- Dados e filtros ---------- */
+  const all = () => {
+    const seen = new Set(), out = [];
+    [...BASE, ...state.live, ...state.remote].forEach(i => {
+      if (seen.has(i.id) || expired(i)) return;
+      seen.add(i.id); out.push({ tipo: 'Concurso', ...i });
+    });
+    return out;
+  };
+
+  function filtered() {
+    const q = norm(state.q);
+    return all().filter(i =>
+      (!q || norm(i.orgao + ' ' + i.cargo + ' ' + i.banca).includes(q)) &&
+      (state.region === 'all' || i.regiao === state.region) &&
+      (state.role === 'all' || norm(i.cargo).includes(norm(state.role))) &&
+      (state.status === 'all' || i.status === state.status) &&
+      (state.tipo === 'all' || i.tipo === state.tipo) &&
+      (!state.onlyFav || state.favs.has(i.id))
+    ).sort((a, b) => (state.favs.has(b.id) - state.favs.has(a.id)) || (STATUS.indexOf(a.status) - STATUS.indexOf(b.status)));
+  }
+
+  function renderChips() {
+    const chip = (attr, v, l, on) => `<button type="button" ${attr}="${v}" aria-pressed="${on}" class="text-xs font-semibold px-3 py-1.5 rounded-full border transition ${on ? 'bg-rx-500 text-ink border-rx-500' : 'border-line text-slate-300 hover:border-rx-500/60'}">${l}</button>`;
+    $('#chips').innerHTML =
+      [['all', 'Tudo'], ['Concurso', 'Concursos'], ['Vaga', 'Vagas']].map(([v, l]) => chip('data-tipo', v, l, state.tipo === v)).join('') +
+      '<span class="w-px h-5 bg-line mx-1" aria-hidden="true"></span>' +
+      [['all', 'Qualquer situação'], ...STATUS.map(x => [x, x])].map(([v, l]) => chip('data-status', v, l, state.status === v)).join('') +
+      `<button type="button" data-fav-filter aria-pressed="${state.onlyFav}" class="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full border transition ${state.onlyFav ? 'bg-amber-400 text-ink border-amber-400' : 'border-line text-slate-300 hover:border-amber-400/60'}">★ Só favoritos</button>`;
+  }
+
+  function card(i) {
+    const fav = state.favs.has(i.id), url = safeUrl(i.link);
+    return `
+    <article class="bg-panel border border-line rounded-2xl overflow-hidden flex flex-col hover:border-rx-500/40 transition">
+      <div class="relative h-24">${cover(i.regiao, i.id.replace(/\W/g, ''))}
+        <div class="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          <span class="text-xs font-bold px-2.5 py-1 rounded-lg border backdrop-blur ${BADGE[i.status] || BADGE.Monitoramento}">${esc(i.status)}</span>
+          <span class="text-xs font-bold px-2.5 py-1 rounded-lg border border-line bg-ink/70 backdrop-blur text-slate-200">${esc(i.tipo)}</span>
+          ${isNovo(i) ? '<span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-rx-500 text-ink">Novo</span>' : ''}
+        </div>
+        <button type="button" data-fav="${esc(i.id)}" aria-pressed="${fav}" aria-label="${fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" class="absolute right-3 top-3 p-1.5 rounded-lg bg-ink/60 backdrop-blur hover:bg-ink transition ${fav ? 'text-amber-400' : 'text-slate-300'}">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="${fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>
+        </button>
+      </div>
+      <div class="p-5 flex-1 flex flex-col">
+        <div class="flex items-start gap-3 -mt-10 mb-3">
+          <div class="w-12 h-12 shrink-0 rounded-xl bg-ink border border-line grid place-items-center font-display font-bold text-rx-400 shadow-lg">${esc(initials(i.orgao))}</div>
+        </div>
+        <h3 class="font-display font-bold leading-snug">${esc(i.orgao)}</h3>
+        <p class="text-sm text-rx-300 mt-1">${esc(i.cargo)}</p>
+        <dl class="mt-4 space-y-2 text-xs border-t border-line pt-4">
+          ${[['Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', REGION_LABEL[i.regiao] || i.regiao, ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
+            .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-500 shrink-0">${k}</dt><dd class="font-semibold text-right ${c}">${esc(v || 'Não informado')}</dd></div>`).join('')}
+        </dl>
+        <div class="mt-auto pt-4 flex items-center justify-between">
+          ${i.ia ? '<span class="text-[11px] text-slate-500">Achado pela IA. Confira no site oficial.</span>' : '<span></span>'}
+          ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-rx-400 hover:text-rx-300 inline-flex items-center gap-1">Abrir link<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4 10 14"/></svg></a>` : '<span class="text-xs text-slate-600">Sem link</span>'}
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function render() {
+    const list = filtered(), total = all();
+    $('#stTotal').textContent = total.length;
+    $('#stOpen').textContent = total.filter(i => i.status === 'Aberto' || i.status === 'Andamento').length;
+    $('#stFav').textContent = total.filter(i => state.favs.has(i.id)).length;
+    renderChips();
+    $('#resultInfo').innerHTML = `<span>${list.length} ${list.length === 1 ? 'resultado' : 'resultados'}</span>` +
+      (state.live.length ? '<button type="button" id="clearLive" class="text-xs text-slate-500 hover:text-rose-400 underline">Limpar achados da IA</button>' : '');
+    $('#grid').innerHTML = list.length ? list.map(card).join('') : `
+      <div class="col-span-full text-center py-16 border border-dashed border-line rounded-2xl">
+        <p class="font-display font-bold text-lg">Nenhuma oportunidade com esses filtros</p>
+        <p class="text-sm text-slate-400 mt-1 mb-4">Limpe os filtros ou peça uma nova busca para encontrar oportunidades ${state.region !== 'all' ? 'em ' + (REGION_LABEL[state.region] || '') : ''}.</p>
+        <button type="button" id="resetFilters" class="text-sm font-bold text-rx-400 hover:text-rx-300">Limpar filtros</button>
+      </div>`;
+  }
+
+  /* ---------- Interações ---------- */
+  function toast(msg, type = 'ok') {
+    const el = document.createElement('div');
+    el.className = `px-4 py-3 rounded-xl text-sm border shadow-xl backdrop-blur ${type === 'err' ? 'bg-rose-950/90 border-rose-500/40 text-rose-100' : 'bg-panel/95 border-rx-500/40 text-slate-100'}`;
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(() => el.remove(), 6000);
+  }
+
+  function updateKeyStatus() {
+    const has = !!localStorage.getItem(KEY);
+    $('#keyDot').className = `w-2 h-2 rounded-full ${has ? 'bg-emerald-500' : 'bg-amber-500'}`;
+    $('#keyText').textContent = has ? 'API conectada' : 'Configurar chave';
+  }
+
+  function showScan() {
+    const ts = Math.max(load(SCAN, 0) || 0, state.remoteTs || 0);
+    $('#lastScan').textContent = ts ? 'Atualizado em ' + new Date(ts).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : 'Sem busca ainda. Configure a chave para atualizar sozinho.';
+  }
+
+  /* ---------- Busca ao vivo (Gemini + Google Search) ---------- */
+  const TTL = 6 * 3600e3, DAY = 864e5;
+  const expired = i => !!i.encerra && i.encerra < new Date().toISOString().slice(0, 10);
+  const isNovo = i => !!i.primeiro && Date.now() - i.primeiro < 3 * DAY;
+  const prazoTxt = i => { const d = i.encerra ? i.encerra.split('-').reverse().slice(0, 2).join('/') : ''; return [i.prazo, d && 'até ' + d].filter(Boolean).join(' – '); };
+
+  const PROMPT = () => `Hoje é ${new Date().toLocaleDateString('pt-BR')}. Pesquise na web oportunidades ATIVAS HOJE para Tecnólogo em Radiologia ou Técnico em Radiologia (inclui tomografia, ressonância e radiodiagnóstico) em São Paulo capital, Grande ABCD (Santo André, São Bernardo, São Caetano, Diadema) e Litoral Paulista.
+Inclua dois tipos: "Concurso" (concursos públicos e processos seletivos com edital) e "Vaga" (vagas de emprego em hospitais, clínicas e laboratórios, em Gupy, Vagas.com, Indeed, InfoJobs, LinkedIn e páginas de carreira).
+Inclua só o que está com inscrições abertas, em andamento ou com edital previsto confirmado. Exclua tudo que já encerrou.
+Responda SOMENTE com um array JSON válido, sem markdown. Chaves de cada item: "tipo" ("Concurso" ou "Vaga"), "orgao", "cargo", "banca" (banca ou plataforma), "salario", "regiao" ("Capital", "ABCD" ou "Litoral"), "prazo", "encerra" (fim das inscrições em AAAA-MM-DD, ou "" se desconhecido), "status" ("Aberto", "Andamento", "Previsto" ou "Monitoramento") e "link" (URL da publicação; "" se não achar).
+Não invente dados. Se nada for encontrado, responda [].`;
+
+  function parseItems(text) {
+    const a = text.indexOf('['), b = text.lastIndexOf(']');
+    if (a < 0 || b < a) throw new Error('A resposta da IA veio em formato inesperado. Tente novamente.');
+    const arr = JSON.parse(text.slice(a, b + 1));
+    if (!Array.isArray(arr)) throw new Error('Resposta inválida da IA.');
+    return arr.filter(x => x && x.orgao && x.cargo).map(x => {
+      const tipo = x.tipo === 'Vaga' ? 'Vaga' : 'Concurso';
+      return {
+        id: 'ia-' + norm(tipo + x.orgao + x.cargo).replace(/[^a-z0-9]+/g, '-').slice(0, 70), tipo,
+        orgao: String(x.orgao).slice(0, 140), cargo: String(x.cargo).slice(0, 160),
+        banca: String(x.banca || '').slice(0, 80), salario: String(x.salario || '').slice(0, 80),
+        regiao: REGION_LABEL[x.regiao] ? x.regiao : 'Capital',
+        prazo: String(x.prazo || '').slice(0, 100),
+        encerra: /^\d{4}-\d{2}-\d{2}$/.test(x.encerra) ? x.encerra : '',
+        status: STATUS.includes(x.status) ? x.status : 'Monitoramento',
+        link: safeUrl(x.link), ia: true
+      };
+    });
+  }
+
+  async function search(silent = false) {
+    const key = localStorage.getItem(KEY);
+    if (!key) { if (!silent) $('#cfg').showModal(); return; }
+    if (state.busy) return;
+    state.busy = true;
+    const btn = $('#searchBtn'), txt = $('#searchBtnText');
+    btn.disabled = true; txt.textContent = 'Atualizando…';
+    $('#searchIcon').classList.add('animate-spin');
+    if (!silent) $('#grid').innerHTML = Array(3).fill('<div class="skeleton h-72 rounded-2xl border border-line"></div>').join('');
+
+    const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 90000);
+    try {
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+        method: 'POST', signal: ctrl.signal,
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: [{ parts: [{ text: PROMPT() }] }], tools: [{ googleSearch: {} }], generationConfig: { temperature: 0.1 } })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const m = data?.error?.message || '';
+        throw new Error(res.status === 400 || res.status === 403 ? 'Chave de API inválida ou sem permissão. Confira no botão do topo.' :
+          res.status === 429 ? 'Limite de uso da API atingido. Aguarde alguns minutos.' : (m || `Erro ${res.status} ao consultar o Gemini.`));
+      }
+      const found = parseItems((data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join(''));
+      const now = Date.now(), prev = new Map(state.live.map(i => [i.id, i]));
+      const fresh = found.filter(i => !expired(i)).map(i => ({ ...i, visto: now, primeiro: prev.get(i.id)?.primeiro || now }));
+      const ids = new Set(fresh.map(i => i.id));
+      // Itens que a IA deixou de citar ficam só 2 dias de tolerância, e somem antes se o prazo vencer.
+      const keep = state.live.filter(i => !ids.has(i.id) && !expired(i) && now - (i.visto || 0) < 2 * DAY);
+      const novos = fresh.filter(i => !prev.has(i.id)).length;
+      state.live = [...fresh, ...keep];
+      save(LIVE, state.live); save(SCAN, now); showScan();
+      if (novos) toast(`${novos} ${novos === 1 ? 'nova oportunidade encontrada' : 'novas oportunidades encontradas'}. Confira no site oficial.`);
+      else if (!silent) toast('Lista atualizada. Nada novo desde a última busca.');
+    } catch (e) {
+      toast(e.name === 'AbortError' ? 'A busca demorou demais. Tente de novo.' : (e instanceof SyntaxError ? 'Não consegui ler a resposta da IA. Tente novamente.' : e.message || 'Falha de conexão. Verifique sua internet.'), 'err');
+    } finally {
+      clearTimeout(timer);
+      state.busy = false; btn.disabled = false; txt.textContent = 'Atualizar agora';
+      $('#searchIcon').classList.remove('animate-spin');
+      render();
+    }
+  }
+
+  // Dados gerados pelo robô do GitHub Actions (data.json), se existirem.
+  async function loadRemote() {
+    try {
+      const r = await fetch('data.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) return;
+      const d = await r.json();
+      state.remote = (d.itens || []).filter(x => x && x.id && x.orgao && x.cargo).map(x => ({ ...x, link: safeUrl(x.link), ia: true }));
+      state.remoteTs = d.atualizado || 0;
+      showScan(); render();
+    } catch { /* sem data.json: segue só com a busca do navegador */ }
+  }
+
+  const stale = () => Date.now() - (load(SCAN, 0) || 0) > TTL;
+  const autoRefresh = () => { if (localStorage.getItem(KEY) && stale()) search(true); };
+
+  /* ---------- Eventos ---------- */
+  let t;
+  $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; render(); }, 150); });
+  $('#region').addEventListener('change', e => { state.region = e.target.value; render(); });
+  $('#role').addEventListener('change', e => { state.role = e.target.value; render(); });
+  $('#searchBtn').addEventListener('click', () => search(false));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) autoRefresh(); });
+  $('#keyBtn').addEventListener('click', () => { $('#keyInput').value = localStorage.getItem(KEY) || ''; $('#cfg').showModal(); });
+  $('#cfgForm').addEventListener('submit', e => {
+    if (e.submitter?.value !== 'save') return;
+    const v = $('#keyInput').value.trim();
+    if (!v) { e.preventDefault(); toast('Cole uma chave válida.', 'err'); return; }
+    localStorage.setItem(KEY, v); updateKeyStatus(); toast('Chave salva neste navegador.');
+  });
+  $('#keyClear').addEventListener('click', () => { localStorage.removeItem(KEY); $('#keyInput').value = ''; updateKeyStatus(); $('#cfg').close(); toast('Chave removida.'); });
+
+  document.addEventListener('click', e => {
+    const f = e.target.closest('[data-fav]');
+    if (f) { const id = f.dataset.fav; state.favs.has(id) ? state.favs.delete(id) : state.favs.add(id); save(FAV, [...state.favs]); render(); return; }
+    const s = e.target.closest('[data-status]');
+    if (s) { state.status = s.dataset.status; render(); return; }
+    const tp = e.target.closest('[data-tipo]');
+    if (tp) { state.tipo = tp.dataset.tipo; render(); return; }
+    if (e.target.closest('[data-fav-filter]')) { state.onlyFav = !state.onlyFav; render(); return; }
+    if (e.target.id === 'clearLive') { state.live = []; save(LIVE, []); toast('Achados da IA removidos.'); render(); return; }
+    if (e.target.id === 'resetFilters') {
+      Object.assign(state, { q: '', region: 'all', role: 'all', status: 'all', tipo: 'all', onlyFav: false });
+      $('#q').value = ''; $('#region').value = 'all'; $('#role').value = 'all'; render();
+    }
+  });
+
+  state.live = state.live.filter(i => !expired(i));
+  drawXray(); updateKeyStatus(); showScan(); render();
+  loadRemote(); autoRefresh();
+})();
+</script>
+</body>
+</html>
