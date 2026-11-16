@@ -13,7 +13,7 @@ Responda SOMENTE com um array JSON válido, sem markdown. Chaves: "tipo" ("Concu
 Não invente dados. Se nada for encontrado, responda [].`;
 
 async function consultar() {
-  const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+  const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent', {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], tools: [{ googleSearch: {} }], generationConfig: { temperature: 0.1 } })
   });
