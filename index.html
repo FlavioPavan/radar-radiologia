@@ -145,19 +145,25 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
       </label>
       <label class="block text-xs font-semibold text-slate-400">Região
         <select id="region" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:border-rx-500 focus:outline-none">
-          <option value="all">Todas as regiões</option><option value="Capital">São Paulo capital</option><option value="ABCD">Grande ABCD</option><option value="Litoral">Litoral paulista</option>
+          <option value="all">Todas as regiões</option>
+          <option value="ABCD">Grande ABCD (base / proximidade)</option>
+          <option value="Capital">São Paulo capital</option>
+          <option value="Litoral">Litoral paulista</option>
         </select>
       </label>
       <label class="block text-xs font-semibold text-slate-400">Cargo
         <select id="role" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:border-rx-500 focus:outline-none">
-          <option value="all">Todos os cargos</option><option value="Tecnólogo">Tecnólogo em Radiologia</option><option value="Técnico">Técnico em Radiologia</option><option value="Estágio">Estágio em Radiologia</option>
+          <option value="all">Todos os cargos</option>
+          <option value="Tecnólogo">Tecnólogo em Radiologia</option>
+          <option value="Técnico">Técnico em Radiologia</option>
+          <option value="Estágio">Estágio em Radiologia</option>
         </select>
       </label>
     </div>
     <div class="flex flex-wrap items-center gap-2" id="chips" role="group" aria-label="Situação"></div>
   </section>
 
-  <div id="resultInfo" class="flex items-center justify-between text-sm text-slate-400"></div>
+  <div id="resultInfo" class="flex items-center justify-between gap-3 text-sm text-slate-400"></div>
   <div id="grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" aria-live="polite"></div>
 </main>
 
@@ -174,13 +180,18 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   const FAV = 'radar_favs_v2';
   const MODEL = 'gemini-3.8-flash';
   const STATUS = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
+  const PROXIMITY = { ABCD: 0, Capital: 1, Litoral: 2 };
   const BADGE = {
     Aberto: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
     Andamento: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
     Previsto: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
     Monitoramento: 'bg-violet-500/15 text-violet-300 border-violet-500/30'
   };
-  const REGION_LABEL = { Capital: 'São Paulo capital', ABCD: 'Grande ABCD', Litoral: 'Litoral paulista' };
+  const REGION_LABEL = {
+    Capital: 'São Paulo capital',
+    ABCD: 'Grande ABCD · Próximo',
+    Litoral: 'Litoral paulista'
+  };
 
   const BASE = [
     { id: 'usp-fuvest', orgao: 'Universidade de São Paulo (USP)', cargo: 'Técnico em Radiologia (Odontologia / Veterinária)', banca: 'FUVEST', salario: 'R$ 6.027,72 (CLT)', regiao: 'Capital', prazo: 'Em andamento (provas práticas)', status: 'Andamento', link: 'https://www.fuvest.br/tecnico-radiologia/' },
@@ -205,7 +216,33 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   const DAY = 864e5;
   const expired = i => !!i.encerra && i.encerra < todayLocal();
   const isNovo = i => !!i.primeiro && Date.now() - i.primeiro < 3 * DAY;
-  const prazoTxt = i => { const d = i.encerra ? i.encerra.split('-').reverse().slice(0, 2).join('/') : ''; return [i.prazo, d && 'até ' + d].filter(Boolean).join(' – '); };
+
+  function daysLeft(i) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(i.encerra || ''))) return null;
+    const [y, m, d] = i.encerra.split('-').map(Number);
+    const [ty, tm, td] = todayLocal().split('-').map(Number);
+    const diff = Math.round((Date.UTC(y, m - 1, d) - Date.UTC(ty, tm - 1, td)) / DAY);
+    return diff >= 0 ? diff : null;
+  }
+
+  function urgencyBadge(i) {
+    const left = daysLeft(i);
+    if (left === null || left > 3) return '';
+    const txt = left === 0 ? 'Vence hoje' : left === 1 ? 'Vence amanhã' : `Encerra em ${left}d`;
+    const cls = left <= 1
+      ? 'bg-rose-500/20 text-rose-200 border-rose-500/40'
+      : 'bg-amber-500/20 text-amber-200 border-amber-500/40';
+    return `<span class="text-xs font-bold px-2.5 py-1 rounded-lg border backdrop-blur ${cls}">${txt}</span>`;
+  }
+
+  const prazoTxt = i => {
+    const d = i.encerra ? i.encerra.split('-').reverse().slice(0, 2).join('/') : '';
+    return [i.prazo, d && 'até ' + d].filter(Boolean).join(' – ');
+  };
+
+  function hasActiveFilters() {
+    return !!(state.q.trim() || state.region !== 'all' || state.role !== 'all' || state.status !== 'all' || state.tipo !== 'all' || state.onlyFav);
+  }
 
   function drawXray() {
     $('#xray').innerHTML = `
@@ -289,6 +326,14 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     return out;
   };
 
+  function priorityScore(item) {
+    const left = daysLeft(item);
+    const urgent = left !== null && left <= 3 ? 0 : 1;
+    const statusRank = STATUS.indexOf(item.status);
+    const proxRank = PROXIMITY[item.regiao] ?? 9;
+    return [urgent, statusRank === -1 ? 99 : statusRank, proxRank];
+  }
+
   function filtered() {
     const q = norm(state.q);
     return all().filter(i =>
@@ -298,7 +343,15 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
       (state.status === 'all' || i.status === state.status) &&
       (state.tipo === 'all' || i.tipo === state.tipo) &&
       (!state.onlyFav || state.favs.has(i.id))
-    ).sort((a, b) => (state.favs.has(b.id) - state.favs.has(a.id)) || (STATUS.indexOf(a.status) - STATUS.indexOf(b.status)));
+    ).sort((a, b) => {
+      const favDiff = Number(state.favs.has(b.id)) - Number(state.favs.has(a.id));
+      if (favDiff !== 0) return favDiff;
+      const pa = priorityScore(a), pb = priorityScore(b);
+      for (let idx = 0; idx < pa.length; idx++) {
+        if (pa[idx] !== pb[idx]) return pa[idx] - pb[idx];
+      }
+      return 0;
+    });
   }
 
   function renderChips() {
@@ -318,6 +371,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
         <div class="absolute left-3 top-3 flex flex-wrap gap-1.5">
           <span class="text-xs font-bold px-2.5 py-1 rounded-lg border backdrop-blur ${BADGE[i.status] || BADGE.Monitoramento}">${esc(i.status)}</span>
           <span class="text-xs font-bold px-2.5 py-1 rounded-lg border border-line bg-ink/70 backdrop-blur text-slate-200">${esc(i.tipo)}</span>
+          ${urgencyBadge(i)}
           ${isNovo(i) ? '<span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-rx-500 text-ink">Novo</span>' : ''}
         </div>
         <button type="button" data-fav="${esc(i.id)}" aria-pressed="${fav}" aria-label="${fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" class="absolute right-3 top-3 p-1.5 rounded-lg bg-ink/60 backdrop-blur hover:bg-ink transition ${fav ? 'text-amber-400' : 'text-slate-300'}">
@@ -331,12 +385,15 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
         <h3 class="font-display font-bold leading-snug">${esc(i.orgao)}</h3>
         <p class="text-sm text-rx-300 mt-1">${esc(i.cargo)}</p>
         <dl class="mt-4 space-y-2 text-xs border-t border-line pt-4">
-          ${[['Fonte / Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', REGION_LABEL[i.regiao] || i.regiao, ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
+          ${[['Fonte / Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', REGION_LABEL[i.regiao] || i.regiao, i.regiao === 'ABCD' ? 'text-rx-300' : ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
             .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-500 shrink-0">${k}</dt><dd class="font-semibold text-right ${c}">${esc(v || 'Não informado')}</dd></div>`).join('')}
         </dl>
-        <div class="mt-auto pt-4 flex items-center justify-between">
+        <div class="mt-auto pt-4 flex items-center justify-between gap-2">
           ${i.ia ? '<span class="text-[11px] text-slate-500">Atualizado via ' + esc(MODEL) + '. Confira no site oficial.</span>' : '<span></span>'}
-          ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-rx-400 hover:text-rx-300 inline-flex items-center gap-1">Abrir link<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4 10 14"/></svg></a>` : '<span class="text-xs text-slate-600">Sem link</span>'}
+          <div class="flex items-center gap-3 shrink-0">
+            ${url ? `<button type="button" data-copy="${esc(url)}" class="text-xs font-semibold text-slate-400 hover:text-slate-200 transition">Copiar link</button>
+            <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-rx-400 hover:text-rx-300 inline-flex items-center gap-1">Abrir link<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4 10 14"/></svg></a>` : '<span class="text-xs text-slate-600">Sem link</span>'}
+          </div>
         </div>
       </div>
     </article>`;
@@ -348,7 +405,8 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     $('#stOpen').textContent = total.filter(i => i.status === 'Aberto' || i.status === 'Andamento').length;
     $('#stFav').textContent = total.filter(i => state.favs.has(i.id)).length;
     renderChips();
-    $('#resultInfo').innerHTML = `<span>${list.length} ${list.length === 1 ? 'resultado' : 'resultados'}</span>`;
+    $('#resultInfo').innerHTML = `<span>${list.length} ${list.length === 1 ? 'resultado' : 'resultados'}</span>` +
+      (hasActiveFilters() ? '<button type="button" id="resetFiltersTop" class="text-xs font-semibold text-rx-400 hover:text-rx-300 underline">Limpar filtros</button>' : '');
     $('#grid').innerHTML = list.length ? list.map(card).join('') : `
       <div class="col-span-full text-center py-16 border border-dashed border-line rounded-2xl">
         <p class="font-display font-bold text-lg">Nenhuma oportunidade com esses filtros</p>
@@ -362,7 +420,16 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     el.className = `px-4 py-3 rounded-xl text-sm border shadow-xl backdrop-blur ${type === 'err' ? 'bg-rose-950/90 border-rose-500/40 text-rose-100' : 'bg-panel/95 border-rx-500/40 text-slate-100'}`;
     el.textContent = msg;
     $('#toasts').appendChild(el);
-    setTimeout(() => el.remove(), 6000);
+    setTimeout(() => el.remove(), 4500);
+  }
+
+  async function copyLink(url) {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('Link copiado para a área de transferência.');
+    } catch {
+      toast('Não foi possível copiar o link neste navegador.', 'err');
+    }
   }
 
   function showScan() {
@@ -382,12 +449,20 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     } catch {}
   }
 
+  function resetAllFilters() {
+    Object.assign(state, { q: '', region: 'all', role: 'all', status: 'all', tipo: 'all', onlyFav: false });
+    $('#q').value = ''; $('#region').value = 'all'; $('#role').value = 'all';
+    render();
+  }
+
   let t;
   $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; render(); }, 150); });
   $('#region').addEventListener('change', e => { state.region = e.target.value; render(); });
   $('#role').addEventListener('change', e => { state.role = e.target.value; render(); });
 
   document.addEventListener('click', e => {
+    const cp = e.target.closest('[data-copy]');
+    if (cp) { copyLink(cp.dataset.copy); return; }
     const f = e.target.closest('[data-fav]');
     if (f) { const id = f.dataset.fav; state.favs.has(id) ? state.favs.delete(id) : state.favs.add(id); save(FAV, [...state.favs]); render(); return; }
     const s = e.target.closest('[data-status]');
@@ -395,10 +470,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     const tp = e.target.closest('[data-tipo]');
     if (tp) { state.tipo = tp.dataset.tipo; render(); return; }
     if (e.target.closest('[data-fav-filter]')) { state.onlyFav = !state.onlyFav; render(); return; }
-    if (e.target.id === 'resetFilters') {
-      Object.assign(state, { q: '', region: 'all', role: 'all', status: 'all', tipo: 'all', onlyFav: false });
-      $('#q').value = ''; $('#region').value = 'all'; $('#role').value = 'all'; render();
-    }
+    if (e.target.id === 'resetFilters' || e.target.id === 'resetFiltersTop') { resetAllFilters(); }
   });
 
   drawXray(); showScan(); render();
