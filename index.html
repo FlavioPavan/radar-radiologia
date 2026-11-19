@@ -69,20 +69,20 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   html.no-tw input, html.no-tw select { width: 100%; margin-top: 6px; background: #070b14; color: #f1f5f9; border: 1px solid #1a2438; border-radius: 12px; padding: 10px 12px; font-size: 14px; font-family: inherit; }
   html.no-tw button { font-family: inherit; cursor: pointer; }
   html.no-tw #chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
-  html.no-tw #chips button { background: transparent; color: #cbd5e1; border: 1px solid #1a2438; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 600; }
+  html.no-tw #chips button { background: transparent; color: #cbd5e1; border: 1px solid #1a2438; border-radius: 999px; padding: 0 16px; min-height: 44px; font-size: 14px; font-weight: 600; }
   html.no-tw #chips button[aria-pressed="true"] { background: #22b8d3; color: #070b14; border-color: #22b8d3; }
   html.no-tw article { background: #0d1422; border: 1px solid #1a2438; border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
   html.no-tw article > div:first-child { position: relative; height: 96px; }
   html.no-tw article > div:last-child { padding: 20px; display: flex; flex-direction: column; flex: 1; }
   html.no-tw article h3 { margin: 8px 0 4px; font-size: 16px; font-weight: 700; }
   html.no-tw article p { margin: 0 0 12px; font-size: 13px; color: #8fe3f2; }
-  html.no-tw article dl { margin: 0; border-top: 1px solid #1a2438; padding-top: 12px; font-size: 12px; }
+  html.no-tw article dl { margin: 0; border-top: 1px solid #1a2438; padding-top: 12px; font-size: 14px; }
   html.no-tw article dl > div { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
-  html.no-tw article dt { color: #64748b; }
+  html.no-tw article dt { color: #94a3b8; }
   html.no-tw article dd { margin: 0; font-weight: 600; text-align: right; }
   html.no-tw article a { color: #4fd1e8; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
   html.no-tw #xray { width: 220px; height: 220px; margin: 0 auto; display: block; }
-  html.no-tw footer { border-top: 1px solid #1a2438; background: #0d1422; padding: 24px 16px; text-align: center; font-size: 12px; color: #64748b; margin-top: 40px; }
+  html.no-tw footer { border-top: 1px solid #1a2438; background: #0d1422; padding: 24px 16px; text-align: center; font-size: 14px; color: #94a3b8; margin-top: 40px; }
 </style>
 <script>
 (() => {
@@ -109,9 +109,9 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
         <p class="text-xs text-slate-400 hidden sm:block">Concursos, vagas e estágios em Radiologia</p>
       </div>
     </div>
-    <span class="inline-flex items-center gap-2 text-xs bg-line/60 border border-line px-3 py-1.5 rounded-xl text-slate-300 font-semibold">
-      <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Automático 1x/dia
-    </span>
+    <p class="inline-flex items-center gap-2 text-xs text-slate-300">
+      <span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span> <span id="headerScan">Atualização automática diária</span>
+    </p>
   </div>
 </header>
 
@@ -141,12 +141,12 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   <section class="bg-panel border border-line rounded-2xl p-5 space-y-4" aria-label="Filtros">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
       <label class="block text-xs font-semibold text-slate-400">Órgão, empresa ou cargo
-        <input id="q" type="search" placeholder="Ex.: USP, FIDI, LinkedIn, Estágio" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:border-rx-500 focus:outline-none">
+        <input id="q" type="search" placeholder="Ex.: USP, FIDI, LinkedIn, Estágio" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-rx-500 focus:outline-none">
       </label>
       <label class="block text-xs font-semibold text-slate-400">Região
         <select id="region" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:border-rx-500 focus:outline-none">
           <option value="all">Todas as regiões</option>
-          <option value="ABCD">Grande ABCD (base / proximidade)</option>
+          <option value="ABCD">Grande ABCD (mais perto)</option>
           <option value="Capital">São Paulo capital</option>
           <option value="Litoral">Litoral paulista</option>
         </select>
@@ -167,7 +167,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   <div id="grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" aria-live="polite"></div>
 </main>
 
-<footer class="border-t border-line bg-panel py-6 text-center text-xs text-slate-500 px-4">
+<footer class="border-t border-line bg-panel py-6 text-center text-sm text-slate-400 px-4">
   Confirme sempre datas, requisitos e se a vaga continua aberta no site oficial. Atualização diária automatizada.
 </footer>
 
@@ -178,7 +178,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   'use strict';
   const $ = s => document.querySelector(s);
   const FAV = 'radar_favs_v2';
-  const MODEL = 'gemini-3.8-flash';
+  let MODEL = 'Gemini';
   const STATUS = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
   const PROXIMITY = { ABCD: 0, Capital: 1, Litoral: 2 };
   const BADGE = {
@@ -189,7 +189,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   };
   const REGION_LABEL = {
     Capital: 'São Paulo capital',
-    ABCD: 'Grande ABCD · Próximo',
+    ABCD: 'Grande ABCD · Mais perto',
     Litoral: 'Litoral paulista'
   };
 
@@ -331,7 +331,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     const urgent = left !== null && left <= 3 ? 0 : 1;
     const statusRank = STATUS.indexOf(item.status);
     const proxRank = PROXIMITY[item.regiao] ?? 9;
-    return [urgent, statusRank === -1 ? 99 : statusRank, proxRank];
+    return [urgent, statusRank === -1 ? 99 : statusRank, left ?? 9999, proxRank];
   }
 
   function filtered() {
@@ -355,12 +355,12 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   }
 
   function renderChips() {
-    const chip = (attr, v, l, on) => `<button type="button" ${attr}="${v}" aria-pressed="${on}" class="text-xs font-semibold px-3 py-1.5 rounded-full border transition ${on ? 'bg-rx-500 text-ink border-rx-500' : 'border-line text-slate-300 hover:border-rx-500/60'}">${l}</button>`;
+    const chip = (attr, v, l, on) => `<button type="button" ${attr}="${v}" aria-pressed="${on}" class="inline-flex items-center min-h-11 text-sm font-semibold px-4 rounded-full border transition ${on ? 'bg-rx-500 text-ink border-rx-500' : 'border-line text-slate-300 hover:border-rx-500/60'}">${l}</button>`;
     $('#chips').innerHTML =
       [['all', 'Tudo'], ['Vaga', 'Vagas'], ['Estágio', 'Estágios'], ['Concurso', 'Concursos']].map(([v, l]) => chip('data-tipo', v, l, state.tipo === v)).join('') +
       '<span class="w-px h-5 bg-line mx-1" aria-hidden="true"></span>' +
       [['all', 'Qualquer situação'], ...STATUS.map(x => [x, x])].map(([v, l]) => chip('data-status', v, l, state.status === v)).join('') +
-      `<button type="button" data-fav-filter aria-pressed="${state.onlyFav}" class="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full border transition ${state.onlyFav ? 'bg-amber-400 text-ink border-amber-400' : 'border-line text-slate-300 hover:border-amber-400/60'}">★ Só favoritos</button>`;
+      `<button type="button" data-fav-filter aria-pressed="${state.onlyFav}" class="ml-auto inline-flex items-center min-h-11 text-sm font-semibold px-4 rounded-full border transition ${state.onlyFav ? 'bg-amber-400 text-ink border-amber-400' : 'border-line text-slate-300 hover:border-amber-400/60'}">★ Só favoritos</button>`;
   }
 
   function card(i) {
@@ -374,25 +374,25 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
           ${urgencyBadge(i)}
           ${isNovo(i) ? '<span class="text-xs font-bold px-2.5 py-1 rounded-lg bg-rx-500 text-ink">Novo</span>' : ''}
         </div>
-        <button type="button" data-fav="${esc(i.id)}" aria-pressed="${fav}" aria-label="${fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" class="absolute right-3 top-3 p-1.5 rounded-lg bg-ink/60 backdrop-blur hover:bg-ink transition ${fav ? 'text-amber-400' : 'text-slate-300'}">
+        <button type="button" data-fav="${esc(i.id)}" aria-pressed="${fav}" aria-label="${fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}" class="absolute right-2 top-2 grid place-items-center w-11 h-11 rounded-lg bg-ink/60 backdrop-blur hover:bg-ink transition ${fav ? 'text-amber-400' : 'text-slate-300'}">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="${fav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>
         </button>
       </div>
       <div class="p-5 flex-1 flex flex-col">
         <div class="flex items-start gap-3 -mt-10 mb-3">
-          <div class="w-12 h-12 shrink-0 rounded-xl bg-ink border border-line grid place-items-center font-display font-bold text-rx-400 shadow-lg">${esc(initials(i.orgao))}</div>
+          <div class="relative z-10 w-12 h-12 shrink-0 rounded-xl bg-ink border border-line grid place-items-center font-display font-bold text-rx-400 shadow-lg">${esc(initials(i.orgao))}</div>
         </div>
         <h3 class="font-display font-bold leading-snug">${esc(i.orgao)}</h3>
         <p class="text-sm text-rx-300 mt-1">${esc(i.cargo)}</p>
-        <dl class="mt-4 space-y-2 text-xs border-t border-line pt-4">
+        <dl class="mt-4 space-y-2 text-sm border-t border-line pt-4">
           ${[['Fonte / Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', REGION_LABEL[i.regiao] || i.regiao, i.regiao === 'ABCD' ? 'text-rx-300' : ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
-            .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-500 shrink-0">${k}</dt><dd class="font-semibold text-right ${c}">${esc(v || 'Não informado')}</dd></div>`).join('')}
+            .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-400 shrink-0">${k}</dt><dd class="font-semibold text-right ${c}">${esc(v || 'Não informado')}</dd></div>`).join('')}
         </dl>
         <div class="mt-auto pt-4 flex items-center justify-between gap-2">
-          ${i.ia ? '<span class="text-[11px] text-slate-500">Atualizado via ' + esc(MODEL) + '. Confira no site oficial.</span>' : '<span></span>'}
+          ${i.ia ? '<span class="text-xs text-slate-400">Atualizado via ' + esc(MODEL) + '. Confira no site oficial.</span>' : '<span></span>'}
           <div class="flex items-center gap-3 shrink-0">
-            ${url ? `<button type="button" data-copy="${esc(url)}" class="text-xs font-semibold text-slate-400 hover:text-slate-200 transition">Copiar link</button>
-            <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-rx-400 hover:text-rx-300 inline-flex items-center gap-1">Abrir link<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4 10 14"/></svg></a>` : '<span class="text-xs text-slate-600">Sem link</span>'}
+            ${url ? `<button type="button" data-copy="${esc(url)}" class="min-h-11 px-2 text-sm font-semibold text-slate-300 hover:text-white transition">Copiar link</button>
+            <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="min-h-11 px-2 text-sm font-bold text-rx-400 hover:text-rx-300 inline-flex items-center gap-1">Abrir link<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4 10 14"/></svg></a>` : '<span class="text-xs text-slate-400">Sem link</span>'}
           </div>
         </div>
       </div>
@@ -433,9 +433,16 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   }
 
   function showScan() {
-    $('#lastScan').textContent = state.remoteTs
-      ? 'Última varredura automática: ' + new Date(state.remoteTs).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
-      : 'Varredura automática 1x/dia via GitHub Actions.';
+    const old = state.loaded && (!state.remoteTs || Date.now() - state.remoteTs > 2 * DAY);
+    $('#lastScan').className = old ? 'text-sm font-semibold text-amber-300' : 'text-xs text-slate-400';
+    $('#lastScan').textContent = old
+      ? (state.remoteTs
+        ? 'Atenção: a busca automática não roda desde ' + new Date(state.remoteTs).toLocaleDateString('pt-BR') + '. Os dados podem estar desatualizados.'
+        : 'Atenção: a busca automática ainda não trouxe resultados. Abaixo, só oportunidades de exemplo.')
+      : state.remoteTs
+        ? 'Última varredura automática: ' + new Date(state.remoteTs).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+        : 'Varredura automática 1x/dia via GitHub Actions.';
+    if (state.remoteTs) $('#headerScan').textContent = 'Atualizado ' + new Date(state.remoteTs).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
 
   async function loadRemote() {
@@ -445,6 +452,8 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
       const d = await r.json();
       state.remote = (d.itens || []).filter(x => x && x.id && x.orgao && x.cargo).map(x => ({ ...x, link: safeUrl(x.link), ia: true }));
       state.remoteTs = Number(d.atualizado) || 0;
+      if (d.modelo) MODEL = d.modelo;
+      state.loaded = true;
       showScan(); render();
     } catch {}
   }
