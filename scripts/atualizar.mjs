@@ -7,7 +7,7 @@ if (!key) {
   throw new Error('Secret GEMINI_API_KEY ausente em Settings > Secrets and variables > Actions.');
 }
 
-const MODEL = 'gemini-2.5-flash';
+const MODEL = 'gemini-3.8-flash';
 const REG = ['Capital', 'ABCD', 'Litoral'];
 const ST = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
 const TIPOS = ['Concurso', 'Vaga', 'Estágio'];
