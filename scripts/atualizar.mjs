@@ -1,13 +1,15 @@
-// Roda no GitHub Actions: busca no Gemini com Google Search e grava data.json.
+// Pipeline diário (custo zero): busca vagas, estágios e concursos via Gemini + Google Search,
+// deduplica e grava data.json. Em caso de 429 (cota), preserva o data.json atual sem falhar.
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const key = process.env.GEMINI_API_KEY?.trim();
 if (!key) {
-  throw new Error('Defina o secret GEMINI_API_KEY em Settings > Secrets and variables > Actions.');
+  throw new Error('Secret GEMINI_API_KEY ausente em Settings > Secrets and variables > Actions.');
 }
 
 const REG = ['Capital', 'ABCD', 'Litoral'];
 const ST = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
+const TIPOS = ['Concurso', 'Vaga', 'Estágio'];
 const DAY = 86_400_000;
 
 const norm = (s) =>
@@ -15,12 +17,13 @@ const norm = (s) =>
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
 const safeUrl = (u) => {
   try {
-    const x = new URL(String(u ?? '').trim());
-    return /^https?:$/.test(x.protocol) ? x.href : '';
+    const parsed = new URL(String(u ?? '').trim());
+    return /^https?:$/.test(parsed.protocol) ? parsed.href : '';
   } catch {
     return '';
   }
@@ -29,13 +32,33 @@ const safeUrl = (u) => {
 const hojeSP = () =>
   new Intl.DateTimeFormat('sv-SE', { timeZone: 'America/Sao_Paulo' }).format(new Date());
 
+const dataBR = () =>
+  new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo' }).format(new Date());
+
 const hoje = hojeSP();
 
-const prompt = `Hoje é ${new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo' }).format(new Date())}. Pesquise na web oportunidades ATIVAS HOJE para Tecnólogo em Radiologia ou Técnico em Radiologia (inclui tomografia, ressonância, mamografia, hemodinâmica e radiodiagnóstico) em São Paulo capital, Grande ABCD (Santo André, São Bernardo do Campo, São Caetano do Sul, Diadema, Mauá, Ribeirão Pires, Rio Grande da Serra) e Litoral Paulista (Baixada Santista e Litoral Norte).
-Inclua dois tipos: "Concurso" (concursos públicos e processos seletivos com edital) e "Vaga" (vagas de emprego em hospitais, clínicas e laboratórios, em Gupy, Vagas.com, Indeed, InfoJobs, LinkedIn e páginas de carreira).
-Inclua só o que está com inscrições abertas, em andamento ou com edital previsto confirmado. Exclua tudo que já encerrou.
-Responda SOMENTE com um array JSON válido, sem markdown. Chaves de cada item: "tipo" ("Concurso" ou "Vaga"), "orgao", "cargo", "banca", "salario", "regiao" ("Capital", "ABCD" ou "Litoral"), "prazo", "encerra" (AAAA-MM-DD ou ""), "status" ("Aberto", "Andamento", "Previsto" ou "Monitoramento") e "link".
-Não invente dados. Se nada for encontrado, responda [].`;
+const prompt = `Hoje é ${dataBR()} (${hoje}). Pesquise na web oportunidades ATIVAS para Tecnólogo em Radiologia, Técnico em Radiologia ou Estágio em Radiologia (inclui raios X, tomografia, ressonância, mamografia, hemodinâmica e radiodiagnóstico) nas regiões:
+- Capital: São Paulo
+- ABCD: Santo André, São Bernardo do Campo, São Caetano do Sul, Diadema, Mauá, Ribeirão Pires, Rio Grande da Serra
+- Litoral: Baixada Santista (Santos, São Vicente, Praia Grande, Guarujá, Cubatão) e Litoral Norte
+
+Busque especificamente em portais de emprego e estágio (LinkedIn, Indeed, Gupy, Vagas.com, InfoJobs, Catho, CIEE, Nube e sites de hospitais/clínicas/FIDI/IAMSPE) além de concursos e processos seletivos abertos ou previstos.
+Classifique "tipo" estritamente como "Vaga", "Estágio" ou "Concurso".
+Exclua vagas ou editais encerrados. Não invente dados; use "" quando não houver informação confirmada.
+
+Responda SOMENTE com um array JSON válido (sem crases ou markdown). Cada objeto deve conter:
+{
+  "tipo": "Vaga" | "Estágio" | "Concurso",
+  "orgao": "Nome da empresa, hospital, clínica ou órgão público",
+  "cargo": "Título da vaga, estágio ou cargo do edital",
+  "banca": "LinkedIn, Indeed, Gupy, Vagas.com, InfoJobs, CIEE, banca ou instituição",
+  "salario": "Valor ou bolsa-auxílio ou 'A combinar'",
+  "regiao": "Capital" | "ABCD" | "Litoral",
+  "prazo": "Descrição curta do prazo ou 'Inscrições abertas'",
+  "encerra": "AAAA-MM-DD ou ''",
+  "status": "Aberto" | "Andamento" | "Previsto" | "Monitoramento",
+  "link": "URL direta da vaga/edital ou ''"
+}`;
 
 function extrairArrayJson(texto) {
   const limpo = String(texto ?? '')
@@ -43,29 +66,41 @@ function extrairArrayJson(texto) {
     .replace(/```\s*/g, '')
     .trim();
 
-  const inicio = limpo.indexOf('[');
+  const ini = limpo.indexOf('[');
   const fim = limpo.lastIndexOf(']');
-  if (inicio === -1 || fim === -1 || fim < inicio) {
-    throw new Error('Resposta do Gemini não contém um array JSON válido.');
+  if (ini === -1 || fim === -1 || fim < ini) {
+    throw new Error('Resposta do Gemini não contém array JSON válido.');
   }
 
-  const parsed = JSON.parse(limpo.slice(inicio, fim + 1));
-  if (!Array.isArray(parsed)) {
-    throw new Error('O JSON retornado não é um array.');
+  const dados = JSON.parse(limpo.slice(ini, fim + 1));
+  if (!Array.isArray(dados)) {
+    throw new Error('JSON retornado não é um array.');
   }
-  return parsed;
+  return dados;
 }
 
-async function consultar() {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60_000);
+function carregarBase() {
+  try {
+    const raw = JSON.parse(readFileSync('data.json', 'utf8'));
+    return {
+      atualizado: Number(raw?.atualizado) || 0,
+      itens: Array.isArray(raw?.itens) ? raw.itens : []
+    };
+  } catch {
+    return { atualizado: 0, itens: [] };
+  }
+}
+
+async function buscarGemini() {
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), 65_000);
 
   try {
-    const resp = await fetch(
+    const res = await fetch(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
         method: 'POST',
-        signal: controller.signal,
+        signal: ac.signal,
         headers: {
           'Content-Type': 'application/json',
           'x-goog-api-key': key
@@ -78,96 +113,98 @@ async function consultar() {
       }
     );
 
-    if (!resp.ok) {
-      const errBody = await resp.text().catch(() => '');
-      throw new Error(`Gemini HTTP ${resp.status}: ${errBody.slice(0, 300)}`);
+    if (!res.ok) {
+      const detalhe = await res.text().catch(() => '');
+      const erro = new Error(`HTTP ${res.status}: ${detalhe.slice(0, 350)}`);
+      erro.status = res.status;
+      throw erro;
     }
 
-    const data = await resp.json();
-    const texto = (data.candidates?.[0]?.content?.parts || [])
+    const payload = await res.json();
+    const texto = (payload.candidates?.[0]?.content?.parts || [])
       .map((p) => p.text || '')
       .join('');
 
     return extrairArrayJson(texto);
   } finally {
-    clearTimeout(timeout);
+    clearTimeout(timer);
   }
 }
 
-function carregarAnterior() {
-  try {
-    const raw = JSON.parse(readFileSync('data.json', 'utf8'));
-    return Array.isArray(raw?.itens) ? raw.itens : [];
-  } catch {
-    return [];
-  }
-}
+const anterior = carregarBase();
+const ativosAnteriores = anterior.itens.filter((i) => !i?.encerra || i.encerra >= hoje);
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-let arr = [];
-for (let tentativa = 1; tentativa <= 2; tentativa++) {
-  try {
-    arr = await consultar();
-    break;
-  } catch (err) {
-    console.warn(`Tentativa ${tentativa} falhou: ${err.message}`);
-    if (tentativa === 2) {
-      throw err;
-    }
-    await sleep(2500);
+let rawItens = null;
+try {
+  rawItens = await buscarGemini();
+} catch (err) {
+  console.warn(`Falha na consulta Gemini: ${err.message}`);
+  if (err.status === 429 || String(err.message).includes('429')) {
+    console.warn('Cota (429) atingida. Mantendo data.json anterior sem falhar o workflow.');
+    writeFileSync(
+      'data.json',
+      JSON.stringify({ atualizado: anterior.atualizado, itens: ativosAnteriores }, null, 2) + '\n',
+      'utf8'
+    );
+    process.exit(0);
   }
+  throw err;
 }
 
 const agora = Date.now();
-const anteriores = carregarAnterior();
-const mapaAnterior = new Map(anteriores.map((i) => [i.id, i]));
+const prevMap = new Map(ativosAnteriores.map((i) => [i.id, i]));
+const vistosNoLote = new Set();
 
-const frescos = arr
-  .filter((x) => x && typeof x === 'object' && x.orgao && x.cargo)
-  .map((x) => {
-    const tipo = x.tipo === 'Vaga' ? 'Vaga' : 'Concurso';
-    const orgao = String(x.orgao).trim().slice(0, 140);
-    const cargo = String(x.cargo).trim().slice(0, 160);
-    const id =
-      'ia-' +
-      norm(`${tipo}-${orgao}-${cargo}`)
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '')
-        .slice(0, 70);
+const frescos = [];
+for (const x of rawItens) {
+  if (!x || typeof x !== 'object' || !x.orgao || !x.cargo) continue;
 
-    const encerraRaw = String(x.encerra ?? '').trim();
-    const encerra = /^\d{4}-\d{2}-\d{2}$/.test(encerraRaw) ? encerraRaw : '';
-    const anterior = mapaAnterior.get(id);
+  const tipo = TIPOS.includes(x.tipo) ? x.tipo : 'Vaga';
+  const orgao = String(x.orgao).trim().slice(0, 140);
+  const cargo = String(x.cargo).trim().slice(0, 160);
+  const regiao = REG.includes(x.regiao) ? x.regiao : 'Capital';
 
-    return {
-      id,
-      tipo,
-      orgao,
-      cargo,
-      banca: String(x.banca ?? '').trim().slice(0, 80),
-      salario: String(x.salario ?? '').trim().slice(0, 80),
-      regiao: REG.includes(x.regiao) ? x.regiao : 'Capital',
-      prazo: String(x.prazo ?? '').trim().slice(0, 100),
-      encerra,
-      status: ST.includes(x.status) ? x.status : 'Monitoramento',
-      link: safeUrl(x.link),
-      primeiro: anterior?.primeiro || agora,
-      visto: agora
-    };
-  })
-  .filter((i) => !i.encerra || i.encerra >= hoje);
+  const slug = norm(`${tipo} ${orgao} ${cargo} ${regiao}`)
+    .replace(/\s+/g, '-')
+    .slice(0, 72);
+  const id = `ia-${slug}`;
+
+  if (!slug || vistosNoLote.has(id)) continue;
+  vistosNoLote.add(id);
+
+  const encerraStr = String(x.encerra ?? '').trim();
+  const encerra = /^\d{4}-\d{2}-\d{2}$/.test(encerraStr) ? encerraStr : '';
+  if (encerra && encerra < hoje) continue;
+
+  const anteriorItem = prevMap.get(id);
+
+  frescos.push({
+    id,
+    tipo,
+    orgao,
+    cargo,
+    banca: String(x.banca ?? '').trim().slice(0, 80),
+    salario: String(x.salario ?? '').trim().slice(0, 80),
+    regiao,
+    prazo: String(x.prazo ?? '').trim().slice(0, 100),
+    encerra,
+    status: ST.includes(x.status) ? x.status : 'Aberto',
+    link: safeUrl(x.link),
+    primeiro: anteriorItem?.primeiro || agora,
+    visto: agora
+  });
+}
 
 const idsFrescos = new Set(frescos.map((i) => i.id));
-const tolerancia = anteriores.filter(
+const retidos = ativosAnteriores.filter(
   (i) =>
     i?.id &&
     !idsFrescos.has(i.id) &&
     (!i.encerra || i.encerra >= hoje) &&
-    agora - Number(i.visto || i.primeiro || 0) < 2 * DAY
+    agora - Number(i.visto || i.primeiro || 0) < 3 * DAY
 );
 
-const itens = [...frescos, ...tolerancia];
+const itens = [...frescos, ...retidos];
 
 writeFileSync(
   'data.json',
@@ -175,4 +212,4 @@ writeFileSync(
   'utf8'
 );
 
-console.log(`Concluído: ${itens.length} oportunidades em data.json.`);
+console.log(`Sucesso: ${itens.length} registros (${frescos.length} atuais + ${retidos.length} retidos).`);
