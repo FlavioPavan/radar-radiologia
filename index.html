@@ -19,9 +19,6 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
 </script>
 <style>
   :focus-visible { outline: 2px solid #4fd1e8; outline-offset: 2px; }
-  dialog::backdrop { background: rgba(7,11,20,.8); backdrop-filter: blur(4px); }
-  dialog[open] { animation: pop .18s ease-out; }
-  @keyframes pop { from { opacity: 0; transform: scale(.97); } }
   @keyframes radarSweep {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -39,10 +36,6 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     transform-origin: center;
     animation: radarPulse 2.8s ease-in-out infinite;
   }
-  .skeleton { background: linear-gradient(90deg,#0d1422 25%,#16213a 50%,#0d1422 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
-  @keyframes sh { to { background-position: -200% 0; } }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .animate-spin { animation: spin 1s linear infinite; }
   @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
 
   html.no-tw, html.no-tw body { margin: 0; padding: 0; background: #070b14; color: #f1f5f9; font-family: 'Manrope', system-ui, -apple-system, sans-serif; line-height: 1.5; }
@@ -57,11 +50,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   html.no-tw svg { max-width: 100%; }
   html.no-tw .w-6.h-6, html.no-tw svg.w-6.h-6 { width: 24px; height: 24px; flex-shrink: 0; }
   html.no-tw .w-5.h-5, html.no-tw svg.w-5.h-5 { width: 20px; height: 20px; flex-shrink: 0; }
-  html.no-tw .w-4.h-4, html.no-tw svg.w-4.h-4 { width: 16px; height: 16px; flex-shrink: 0; }
   html.no-tw .w-3\.5.h-3\.5, html.no-tw svg.w-3\.5.h-3\.5 { width: 14px; height: 14px; flex-shrink: 0; }
-  html.no-tw .w-2.h-2 { width: 8px; height: 8px; border-radius: 999px; display: inline-block; flex-shrink: 0; }
-  html.no-tw .bg-emerald-500 { background: #10b981; }
-  html.no-tw .bg-amber-500 { background: #f59e0b; }
   html.no-tw main { max-width: 1280px; margin: 0 auto; padding: 28px 16px; width: 100%; }
   html.no-tw main > * + * { margin-top: 24px; }
   html.no-tw section { background: #0d1422; border: 1px solid #1a2438; border-radius: 20px; padding: 20px; }
@@ -79,8 +68,6 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   html.no-tw label { display: block; font-size: 12px; font-weight: 600; color: #94a3b8; }
   html.no-tw input, html.no-tw select { width: 100%; margin-top: 6px; background: #070b14; color: #f1f5f9; border: 1px solid #1a2438; border-radius: 12px; padding: 10px 12px; font-size: 14px; font-family: inherit; }
   html.no-tw button { font-family: inherit; cursor: pointer; }
-  html.no-tw #keyBtn { background: #162138; color: #f1f5f9; border: 1px solid #243352; border-radius: 12px; padding: 8px 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
-  html.no-tw #searchBtn { background: #22b8d3; color: #070b14; border: 0; border-radius: 12px; padding: 12px 20px; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
   html.no-tw #chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
   html.no-tw #chips button { background: transparent; color: #cbd5e1; border: 1px solid #1a2438; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 600; }
   html.no-tw #chips button[aria-pressed="true"] { background: #22b8d3; color: #070b14; border-color: #22b8d3; }
@@ -96,7 +83,6 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   html.no-tw article a { color: #4fd1e8; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
   html.no-tw #xray { width: 220px; height: 220px; margin: 0 auto; display: block; }
   html.no-tw footer { border-top: 1px solid #1a2438; background: #0d1422; padding: 24px 16px; text-align: center; font-size: 12px; color: #64748b; margin-top: 40px; }
-  html.no-tw dialog { background: #0d1422; color: #f1f5f9; border: 1px solid #1a2438; border-radius: 20px; padding: 24px; max-width: 440px; width: calc(100% - 32px); }
 </style>
 <script>
 (() => {
@@ -123,9 +109,9 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
         <p class="text-xs text-slate-400 hidden sm:block">Concursos, vagas e estágios em Radiologia</p>
       </div>
     </div>
-    <button id="keyBtn" type="button" class="flex items-center gap-2 text-xs bg-line/60 hover:bg-line border border-line px-3 py-2 rounded-xl transition font-semibold">
-      <span id="keyDot" class="w-2 h-2 rounded-full bg-amber-500"></span><span id="keyText">Configurar chave</span>
-    </button>
+    <span class="inline-flex items-center gap-2 text-xs bg-line/60 border border-line px-3 py-1.5 rounded-xl text-slate-300 font-semibold">
+      <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Automático 1x/dia
+    </span>
   </div>
 </header>
 
@@ -140,13 +126,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
         </span>
         <h2 class="font-display text-3xl sm:text-4xl font-extrabold leading-tight max-w-xl">Concursos, vagas e estágios em radiologia no radar</h2>
         <p class="text-slate-300 max-w-lg">Acompanhe oportunidades ativas para Tecnólogo, Técnico e Estágio em Radiologia. O que encerra sai da lista sozinho.</p>
-        <div class="flex flex-wrap items-center gap-3">
-          <button id="searchBtn" type="button" class="bg-rx-500 hover:bg-rx-400 disabled:opacity-60 disabled:cursor-wait text-ink px-5 py-3 rounded-xl font-bold shadow-lg shadow-rx-500/20 transition flex items-center gap-2">
-            <svg id="searchIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.3-4.3M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
-            <span id="searchBtnText">Atualizar agora</span>
-          </button>
-          <span id="lastScan" class="text-xs text-slate-400"></span>
-        </div>
+        <p id="lastScan" class="text-xs text-slate-400"></p>
       </div>
       <svg id="xray" viewBox="0 0 240 240" class="w-56 md:w-full mx-auto opacity-95" aria-hidden="true"></svg>
     </div>
@@ -182,36 +162,17 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
 </main>
 
 <footer class="border-t border-line bg-panel py-6 text-center text-xs text-slate-500 px-4">
-  Confirme sempre datas, requisitos e se a vaga continua aberta no site oficial. Resultados encontrados pela IA podem conter erros.
+  Confirme sempre datas, requisitos e se a vaga continua aberta no site oficial. Atualização diária automatizada.
 </footer>
 
 <div id="toasts" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 space-y-2 sm:w-96" aria-live="polite"></div>
-
-<!-- MODAL -->
-<dialog id="cfg" class="bg-panel text-slate-100 border border-line rounded-2xl w-[calc(100%-2rem)] max-w-md p-0 m-auto shadow-2xl">
-  <form method="dialog" id="cfgForm" class="p-6 space-y-4">
-    <div class="flex items-start justify-between gap-4">
-      <h3 class="font-display text-lg font-bold">Chave da API Gemini</h3>
-      <button value="cancel" aria-label="Fechar" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
-    </div>
-    <p class="text-sm text-slate-400 leading-relaxed">A busca usa o Gemini com pesquisa no Google. Sua chave fica salva só neste navegador e é enviada apenas ao Google. Nunca coloque a chave dentro do código publicado no GitHub.</p>
-    <label class="block text-xs font-semibold text-slate-300">Chave de API
-      <input id="keyInput" type="password" autocomplete="off" placeholder="AIzaSy..." class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm focus:border-rx-500 focus:outline-none">
-    </label>
-    <p class="text-xs text-slate-500">Gere uma chave gratuita em <a class="text-rx-400 underline" target="_blank" rel="noopener noreferrer" href="https://aistudio.google.com/app/apikey">aistudio.google.com</a>.</p>
-    <div class="flex items-center justify-between pt-2">
-      <button type="button" id="keyClear" class="text-xs text-rose-400 hover:text-rose-300 px-2 py-2">Remover chave</button>
-      <button type="submit" value="save" class="bg-rx-500 hover:bg-rx-400 text-ink text-sm font-bold px-5 py-2.5 rounded-xl transition">Salvar chave</button>
-    </div>
-  </form>
-</dialog>
 
 <script>
 (() => {
   'use strict';
   const $ = s => document.querySelector(s);
-  const KEY = 'gemini_api_key_radar', FAV = 'radar_favs_v2', LIVE = 'radar_live_v2', SCAN = 'radar_scan_v2';
-  const MODEL = 'gemini-2.5-flash';
+  const FAV = 'radar_favs_v2';
+  const MODEL = 'gemini-3.8-flash';
   const STATUS = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
   const BADGE = {
     Aberto: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
@@ -232,9 +193,8 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { toast('Não foi possível salvar neste navegador.', 'err'); } };
 
   const state = {
-    live: load(LIVE, []),
     favs: new Set(load(FAV, ['usp-fuvest', 'fidi-iamspe'])),
-    q: '', region: 'all', role: 'all', status: 'all', tipo: 'all', onlyFav: false, busy: false, remote: [], remoteTs: 0
+    q: '', region: 'all', role: 'all', status: 'all', tipo: 'all', onlyFav: false, remote: [], remoteTs: 0
   };
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -242,6 +202,10 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   const initials = s => String(s).replace(/\(.*?\)/g, '').split(/[\s/–-]+/).filter(w => w.length > 2 && /^[A-ZÀ-Ú]/.test(w)).slice(0, 2).map(w => w[0]).join('') || 'ED';
   const todayLocal = () => new Date().toLocaleDateString('sv-SE');
+  const DAY = 864e5;
+  const expired = i => !!i.encerra && i.encerra < todayLocal();
+  const isNovo = i => !!i.primeiro && Date.now() - i.primeiro < 3 * DAY;
+  const prazoTxt = i => { const d = i.encerra ? i.encerra.split('-').reverse().slice(0, 2).join('/') : ''; return [i.prazo, d && 'até ' + d].filter(Boolean).join(' – '); };
 
   function drawXray() {
     $('#xray').innerHTML = `
@@ -317,7 +281,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
 
   const all = () => {
     const seen = new Set(), out = [];
-    [...state.remote, ...state.live, ...BASE].forEach(i => {
+    [...state.remote, ...BASE].forEach(i => {
       if (!i || !i.id || seen.has(i.id) || expired(i)) return;
       seen.add(i.id);
       out.push({ tipo: 'Concurso', ...i });
@@ -371,7 +335,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
             .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-500 shrink-0">${k}</dt><dd class="font-semibold text-right ${c}">${esc(v || 'Não informado')}</dd></div>`).join('')}
         </dl>
         <div class="mt-auto pt-4 flex items-center justify-between">
-          ${i.ia ? '<span class="text-[11px] text-slate-500">Achado pela IA. Confira no site oficial.</span>' : '<span></span>'}
+          ${i.ia ? '<span class="text-[11px] text-slate-500">Atualizado via ' + esc(MODEL) + '. Confira no site oficial.</span>' : '<span></span>'}
           ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-rx-400 hover:text-rx-300 inline-flex items-center gap-1">Abrir link<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4 10 14"/></svg></a>` : '<span class="text-xs text-slate-600">Sem link</span>'}
         </div>
       </div>
@@ -384,12 +348,11 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     $('#stOpen').textContent = total.filter(i => i.status === 'Aberto' || i.status === 'Andamento').length;
     $('#stFav').textContent = total.filter(i => state.favs.has(i.id)).length;
     renderChips();
-    $('#resultInfo').innerHTML = `<span>${list.length} ${list.length === 1 ? 'resultado' : 'resultados'}</span>` +
-      (state.live.length ? '<button type="button" id="clearLive" class="text-xs text-slate-500 hover:text-rose-400 underline">Limpar achados da IA</button>' : '');
+    $('#resultInfo').innerHTML = `<span>${list.length} ${list.length === 1 ? 'resultado' : 'resultados'}</span>`;
     $('#grid').innerHTML = list.length ? list.map(card).join('') : `
       <div class="col-span-full text-center py-16 border border-dashed border-line rounded-2xl">
         <p class="font-display font-bold text-lg">Nenhuma oportunidade com esses filtros</p>
-        <p class="text-sm text-slate-400 mt-1 mb-4">Limpe os filtros ou peça uma nova busca para encontrar oportunidades ${state.region !== 'all' ? 'em ' + (REGION_LABEL[state.region] || '') : ''}.</p>
+        <p class="text-sm text-slate-400 mt-1 mb-4">Limpe os filtros para ver todas as oportunidades ${state.region !== 'all' ? 'em ' + (REGION_LABEL[state.region] || '') : ''}.</p>
         <button type="button" id="resetFilters" class="text-sm font-bold text-rx-400 hover:text-rx-300">Limpar filtros</button>
       </div>`;
   }
@@ -402,94 +365,10 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     setTimeout(() => el.remove(), 6000);
   }
 
-  function updateKeyStatus() {
-    const has = !!localStorage.getItem(KEY);
-    $('#keyDot').className = `w-2 h-2 rounded-full ${has ? 'bg-emerald-500' : 'bg-amber-500'}`;
-    $('#keyText').textContent = has ? 'API conectada' : 'Configurar chave';
-  }
-
-  function openKeyModal() {
-    $('#keyInput').value = localStorage.getItem(KEY) || '';
-    $('#cfg').showModal();
-    setTimeout(() => $('#keyInput').focus(), 20);
-  }
-
   function showScan() {
-    const ts = Math.max(load(SCAN, 0) || 0, state.remoteTs || 0);
-    $('#lastScan').textContent = ts ? 'Atualizado em ' + new Date(ts).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : 'Radar automático ativo · Configure chave para busca manual.';
-  }
-
-  const TTL = 24 * 3600e3, DAY = 864e5;
-  const expired = i => !!i.encerra && i.encerra < todayLocal();
-  const isNovo = i => !!i.primeiro && Date.now() - i.primeiro < 3 * DAY;
-  const prazoTxt = i => { const d = i.encerra ? i.encerra.split('-').reverse().slice(0, 2).join('/') : ''; return [i.prazo, d && 'até ' + d].filter(Boolean).join(' – '); };
-
-  const PROMPT = () => `Hoje é ${new Date().toLocaleDateString('pt-BR')}. Pesquise na web oportunidades ATIVAS para Tecnólogo em Radiologia, Técnico em Radiologia ou Estágio em Radiologia em São Paulo capital, Grande ABCD e Litoral Paulista (LinkedIn, Indeed, Gupy, Vagas.com, InfoJobs, CIEE e editais).
-Responda SOMENTE com um array JSON válido, sem markdown. Chaves: "tipo" ("Concurso", "Vaga" ou "Estágio"), "orgao", "cargo", "banca", "salario", "regiao" ("Capital", "ABCD" ou "Litoral"), "prazo", "encerra" (AAAA-MM-DD ou ""), "status" ("Aberto", "Andamento", "Previsto" ou "Monitoramento") e "link".
-Se nada for encontrado, responda [].`;
-
-  function parseItems(text) {
-    const a = text.indexOf('['), b = text.lastIndexOf(']');
-    if (a < 0 || b < a) throw new Error('A resposta da IA veio em formato inesperado. Tente novamente.');
-    const arr = JSON.parse(text.slice(a, b + 1));
-    if (!Array.isArray(arr)) throw new Error('Resposta inválida da IA.');
-    return arr.filter(x => x && x.orgao && x.cargo).map(x => {
-      const tipo = ['Vaga', 'Estágio', 'Concurso'].includes(x.tipo) ? x.tipo : 'Concurso';
-      return {
-        id: 'ia-' + norm(tipo + x.orgao + x.cargo).replace(/[^a-z0-9]+/g, '-').slice(0, 70), tipo,
-        orgao: String(x.orgao).slice(0, 140), cargo: String(x.cargo).slice(0, 160),
-        banca: String(x.banca || '').slice(0, 80), salario: String(x.salario || '').slice(0, 80),
-        regiao: REGION_LABEL[x.regiao] ? x.regiao : 'Capital',
-        prazo: String(x.prazo || '').slice(0, 100),
-        encerra: /^\d{4}-\d{2}-\d{2}$/.test(x.encerra) ? x.encerra : '',
-        status: STATUS.includes(x.status) ? x.status : 'Monitoramento',
-        link: safeUrl(x.link), ia: true
-      };
-    });
-  }
-
-  async function search(silent = false) {
-    const key = localStorage.getItem(KEY);
-    if (!key) { if (!silent) openKeyModal(); return; }
-    if (state.busy) return;
-    state.busy = true;
-    const btn = $('#searchBtn'), txt = $('#searchBtnText');
-    btn.disabled = true; txt.textContent = 'Atualizando…';
-    $('#searchIcon').classList.add('animate-spin');
-    if (!silent) $('#grid').innerHTML = Array(3).fill('<div class="skeleton h-72 rounded-2xl border border-line"></div>').join('');
-
-    const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 90000);
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
-        method: 'POST', signal: ctrl.signal,
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({ contents: [{ parts: [{ text: PROMPT() }] }], tools: [{ googleSearch: {} }], generationConfig: { temperature: 0.1 } })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        const m = data?.error?.message || '';
-        throw new Error(res.status === 400 || res.status === 403 ? 'Chave de API inválida ou sem permissão. Confira no botão do topo.' :
-          res.status === 429 ? 'Limite de uso da API atingido. Aguarde a renovação da cota.' : (m || `Erro ${res.status} ao consultar o Gemini.`));
-      }
-      const found = parseItems((data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join(''));
-      const now = Date.now(), prev = new Map(state.live.map(i => [i.id, i]));
-      const existingIds = new Set([...BASE.map(i => i.id), ...state.remote.map(i => i.id), ...prev.keys()]);
-      const fresh = found.filter(i => !expired(i)).map(i => ({ ...i, visto: now, primeiro: prev.get(i.id)?.primeiro || now }));
-      const ids = new Set(fresh.map(i => i.id));
-      const keep = state.live.filter(i => !ids.has(i.id) && !expired(i) && now - (i.visto || 0) < 2 * DAY);
-      const novos = fresh.filter(i => !existingIds.has(i.id)).length;
-      state.live = [...fresh, ...keep];
-      save(LIVE, state.live); save(SCAN, now); showScan();
-      if (novos) toast(`${novos} ${novos === 1 ? 'nova oportunidade encontrada' : 'novas oportunidades encontradas'}. Confira no site oficial.`);
-      else if (!silent) toast('Lista atualizada. Nada novo desde a última busca.');
-    } catch (e) {
-      toast(e.name === 'AbortError' ? 'A busca demorou demais. Tente de novo.' : (e instanceof SyntaxError ? 'Não consegui ler a resposta da IA. Tente novamente.' : e.message || 'Falha de conexão. Verifique sua internet.'), 'err');
-    } finally {
-      clearTimeout(timer);
-      state.busy = false; btn.disabled = false; txt.textContent = 'Atualizar agora';
-      $('#searchIcon').classList.remove('animate-spin');
-      render();
-    }
+    $('#lastScan').textContent = state.remoteTs
+      ? 'Última varredura automática: ' + new Date(state.remoteTs).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+      : 'Varredura automática 1x/dia via GitHub Actions.';
   }
 
   async function loadRemote() {
@@ -503,24 +382,10 @@ Se nada for encontrado, responda [].`;
     } catch {}
   }
 
-  const stale = () => Date.now() - (load(SCAN, 0) || 0) > TTL;
-  const autoRefresh = () => { if (localStorage.getItem(KEY) && stale()) search(true); };
-
   let t;
   $('#q').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; render(); }, 150); });
   $('#region').addEventListener('change', e => { state.region = e.target.value; render(); });
   $('#role').addEventListener('change', e => { state.role = e.target.value; render(); });
-  $('#searchBtn').addEventListener('click', () => search(false));
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) autoRefresh(); });
-  $('#keyBtn').addEventListener('click', openKeyModal);
-  $('#cfg').addEventListener('click', e => { if (e.target === $('#cfg')) $('#cfg').close(); });
-  $('#cfgForm').addEventListener('submit', e => {
-    if (e.submitter?.value !== 'save') return;
-    const v = $('#keyInput').value.trim();
-    if (!v) { e.preventDefault(); toast('Cole uma chave válida.', 'err'); return; }
-    localStorage.setItem(KEY, v); updateKeyStatus(); toast('Chave salva neste navegador.');
-  });
-  $('#keyClear').addEventListener('click', () => { localStorage.removeItem(KEY); $('#keyInput').value = ''; updateKeyStatus(); $('#cfg').close(); toast('Chave removida.'); });
 
   document.addEventListener('click', e => {
     const f = e.target.closest('[data-fav]');
@@ -530,16 +395,14 @@ Se nada for encontrado, responda [].`;
     const tp = e.target.closest('[data-tipo]');
     if (tp) { state.tipo = tp.dataset.tipo; render(); return; }
     if (e.target.closest('[data-fav-filter]')) { state.onlyFav = !state.onlyFav; render(); return; }
-    if (e.target.id === 'clearLive') { state.live = []; save(LIVE, []); toast('Achados da IA removidos.'); render(); return; }
     if (e.target.id === 'resetFilters') {
       Object.assign(state, { q: '', region: 'all', role: 'all', status: 'all', tipo: 'all', onlyFav: false });
       $('#q').value = ''; $('#region').value = 'all'; $('#role').value = 'all'; render();
     }
   });
 
-  state.live = state.live.filter(i => !expired(i));
-  drawXray(); updateKeyStatus(); showScan(); render();
-  loadRemote(); autoRefresh();
+  drawXray(); showScan(); render();
+  loadRemote();
 })();
 </script>
 </body>
