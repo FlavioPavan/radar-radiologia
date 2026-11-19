@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Monitor de concursos e processos seletivos para Tecnólogo e Técnico em Radiologia em São Paulo, Grande ABCD e Litoral.">
+<meta name="description" content="Monitor de concursos, vagas e estágios para Tecnólogo e Técnico em Radiologia em São Paulo, Grande ABCD e Litoral.">
 <meta name="theme-color" content="#070b14">
-<title>Radar Radiologia SP – Concursos e Vagas</title>
+<title>Radar Radiologia SP – Concursos, Vagas e Estágios</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070b14'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%234fd1e8' stroke-width='2'/%3E%3Cpath d='M16 16 24 10' stroke='%234fd1e8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,15 +22,29 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   dialog::backdrop { background: rgba(7,11,20,.8); backdrop-filter: blur(4px); }
   dialog[open] { animation: pop .18s ease-out; }
   @keyframes pop { from { opacity: 0; transform: scale(.97); } }
-  @keyframes scan { 0%,100% { transform: translateY(0); } 50% { transform: translateY(190px); } }
-  .scanline { animation: scan 5s ease-in-out infinite; }
+  @keyframes radarSweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes radarPulse {
+    0%, 100% { opacity: .35; transform: scale(.96); }
+    50% { opacity: 1; transform: scale(1.04); }
+  }
+  .radar-sweep {
+    transform-origin: 120px 120px;
+    animation: radarSweep 6s linear infinite;
+  }
+  .radar-ping {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: radarPulse 2.8s ease-in-out infinite;
+  }
   .skeleton { background: linear-gradient(90deg,#0d1422 25%,#16213a 50%,#0d1422 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
   @keyframes sh { to { background-position: -200% 0; } }
   @keyframes spin { to { transform: rotate(360deg); } }
   .animate-spin { animation: spin 1s linear infinite; }
   @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
 
-  /* Fallback nativo caso o CDN do Tailwind falhe ou seja bloqueado */
   html.no-tw, html.no-tw body { margin: 0; padding: 0; background: #070b14; color: #f1f5f9; font-family: 'Manrope', system-ui, -apple-system, sans-serif; line-height: 1.5; }
   html.no-tw *, html.no-tw *::before, html.no-tw *::after { box-sizing: border-box; }
   html.no-tw .font-display { font-family: 'Sora', 'Manrope', system-ui, sans-serif; }
@@ -106,7 +120,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
       </div>
       <div>
         <h1 class="font-display text-lg font-bold leading-tight">Radar Radiologia SP</h1>
-        <p class="text-xs text-slate-400 hidden sm:block">Concursos e vagas para Tecnólogo e Técnico em Radiologia</p>
+        <p class="text-xs text-slate-400 hidden sm:block">Concursos, vagas e estágios em Radiologia</p>
       </div>
     </div>
     <button id="keyBtn" type="button" class="flex items-center gap-2 text-xs bg-line/60 hover:bg-line border border-line px-3 py-2 rounded-xl transition font-semibold">
@@ -121,8 +135,11 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   <section class="relative overflow-hidden rounded-3xl border border-line bg-gradient-to-br from-panel via-[#0a1830] to-[#06222c]">
     <div class="grid md:grid-cols-[1fr_300px] items-center gap-4 p-6 sm:p-10">
       <div class="space-y-5 relative z-10">
-        <h2 class="font-display text-3xl sm:text-4xl font-extrabold leading-tight max-w-xl">Concursos e vagas de radiologia, sempre atualizados</h2>
-        <p class="text-slate-300 max-w-lg">A cada visita o app busca na web o que está aberto hoje na capital, no Grande ABCD e no litoral. O que encerra sai da lista sozinho.</p>
+        <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-rx-500/10 border border-rx-500/30 text-rx-300">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Monitoramento diário · Capital, ABCD e Litoral
+        </span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold leading-tight max-w-xl">Concursos, vagas e estágios em radiologia no radar</h2>
+        <p class="text-slate-300 max-w-lg">Acompanhe oportunidades ativas para Tecnólogo, Técnico e Estágio em Radiologia. O que encerra sai da lista sozinho.</p>
         <div class="flex flex-wrap items-center gap-3">
           <button id="searchBtn" type="button" class="bg-rx-500 hover:bg-rx-400 disabled:opacity-60 disabled:cursor-wait text-ink px-5 py-3 rounded-xl font-bold shadow-lg shadow-rx-500/20 transition flex items-center gap-2">
             <svg id="searchIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.3-4.3M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
@@ -131,7 +148,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
           <span id="lastScan" class="text-xs text-slate-400"></span>
         </div>
       </div>
-      <svg id="xray" viewBox="0 0 240 240" class="w-56 md:w-full mx-auto opacity-90" aria-hidden="true"></svg>
+      <svg id="xray" viewBox="0 0 240 240" class="w-56 md:w-full mx-auto opacity-95" aria-hidden="true"></svg>
     </div>
     <dl class="grid grid-cols-3 border-t border-line bg-ink/40 text-center">
       <div class="py-4"><dd id="stTotal" class="font-display text-2xl font-bold">0</dd><dt class="text-xs text-slate-400">oportunidades monitoradas</dt></div>
@@ -143,8 +160,8 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   <!-- FILTROS -->
   <section class="bg-panel border border-line rounded-2xl p-5 space-y-4" aria-label="Filtros">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <label class="block text-xs font-semibold text-slate-400">Órgão ou cargo
-        <input id="q" type="search" placeholder="Ex.: USP, EBSERH, FIDI" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:border-rx-500 focus:outline-none">
+      <label class="block text-xs font-semibold text-slate-400">Órgão, empresa ou cargo
+        <input id="q" type="search" placeholder="Ex.: USP, FIDI, LinkedIn, Estágio" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-600 focus:border-rx-500 focus:outline-none">
       </label>
       <label class="block text-xs font-semibold text-slate-400">Região
         <select id="region" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:border-rx-500 focus:outline-none">
@@ -153,7 +170,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
       </label>
       <label class="block text-xs font-semibold text-slate-400">Cargo
         <select id="role" class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm text-slate-100 focus:border-rx-500 focus:outline-none">
-          <option value="all">Todos os cargos</option><option value="Tecnólogo">Tecnólogo em Radiologia</option><option value="Técnico">Técnico em Radiologia</option>
+          <option value="all">Todos os cargos</option><option value="Tecnólogo">Tecnólogo em Radiologia</option><option value="Técnico">Técnico em Radiologia</option><option value="Estágio">Estágio em Radiologia</option>
         </select>
       </label>
     </div>
@@ -226,23 +243,60 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   const todayLocal = () => new Date().toLocaleDateString('sv-SE');
 
   function drawXray() {
-    let ribs = '';
-    for (let i = 0; i < 7; i++) {
-      const y = 62 + i * 19, w = 34 + (i < 4 ? i * 13 : (6 - i) * 11 + 28);
-      ribs += `<path d="M120 ${y} Q${120 - w} ${y - 14} ${120 - w - 8} ${y + 20}M120 ${y} Q${120 + w} ${y - 14} ${120 + w + 8} ${y + 20}" />`;
-    }
-    let spine = '';
-    for (let i = 0; i < 11; i++) spine += `<rect x="114" y="${40 + i * 15}" width="12" height="10" rx="3"/>`;
     $('#xray').innerHTML = `
-      <defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#4fd1e8" stop-opacity=".35"/><stop offset="1" stop-color="#4fd1e8" stop-opacity="0"/></radialGradient>
-      <clipPath id="c"><rect x="10" y="10" width="220" height="220" rx="22"/></clipPath></defs>
-      <rect x="10" y="10" width="220" height="220" rx="22" fill="#06101d" stroke="#1a2438"/>
-      <circle cx="120" cy="120" r="110" fill="url(#g)"/>
-      <g clip-path="url(#c)">
-        <g fill="none" stroke="#8fe3f2" stroke-opacity=".75" stroke-width="4" stroke-linecap="round">${ribs}</g>
-        <g fill="#8fe3f2" fill-opacity=".85">${spine}</g>
-        <path d="M70 215 Q120 180 170 215" fill="none" stroke="#8fe3f2" stroke-opacity=".5" stroke-width="6"/>
-        <rect class="scanline" x="10" y="25" width="220" height="3" fill="#4fd1e8" opacity=".9"/>
+      <defs>
+        <radialGradient id="rxGlow" cx="50%" cy="50%" r="55%">
+          <stop offset="0%" stop-color="#22b8d3" stop-opacity=".28"/>
+          <stop offset="65%" stop-color="#0e93ad" stop-opacity=".08"/>
+          <stop offset="100%" stop-color="#070b14" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="sweepGrad" x1="120" y1="120" x2="215" y2="55" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#4fd1e8" stop-opacity=".42"/>
+          <stop offset="100%" stop-color="#4fd1e8" stop-opacity="0"/>
+        </linearGradient>
+        <clipPath id="rxClip">
+          <rect x="10" y="10" width="220" height="220" rx="24"/>
+        </clipPath>
+      </defs>
+
+      <rect x="10" y="10" width="220" height="220" rx="24" fill="#060d19" stroke="#1e2d47"/>
+      <rect x="10" y="10" width="220" height="220" rx="24" fill="url(#rxGlow)"/>
+
+      <g clip-path="url(#rxClip)">
+        <g stroke="#4fd1e8" stroke-opacity=".08" stroke-width="1">
+          <line x1="10" y1="65" x2="230" y2="65"/>
+          <line x1="10" y1="120" x2="230" y2="120"/>
+          <line x1="10" y1="175" x2="230" y2="175"/>
+          <line x1="65" y1="10" x2="65" y2="230"/>
+          <line x1="120" y1="10" x2="120" y2="230"/>
+          <line x1="175" y1="10" x2="175" y2="230"/>
+        </g>
+
+        <circle cx="120" cy="120" r="34" fill="none" stroke="#4fd1e8" stroke-opacity=".22" stroke-width="1.2" stroke-dasharray="4 4"/>
+        <circle cx="120" cy="120" r="64" fill="none" stroke="#4fd1e8" stroke-opacity=".28" stroke-width="1.2"/>
+        <circle cx="120" cy="120" r="92" fill="none" stroke="#4fd1e8" stroke-opacity=".18" stroke-width="1.2" stroke-dasharray="2 5"/>
+
+        <line x1="120" y1="20" x2="120" y2="220" stroke="#4fd1e8" stroke-opacity=".16" stroke-width="1"/>
+        <line x1="20" y1="120" x2="220" y2="120" stroke="#4fd1e8" stroke-opacity=".16" stroke-width="1"/>
+
+        <g class="radar-sweep">
+          <path d="M120 120 L120 26 A94 94 0 0 1 196 66 Z" fill="url(#sweepGrad)"/>
+          <line x1="120" y1="120" x2="120" y2="26" stroke="#4fd1e8" stroke-width="2" stroke-linecap="round"/>
+        </g>
+
+        <g class="radar-ping">
+          <circle cx="154" cy="86" r="9" fill="#4fd1e8" fill-opacity=".18"/>
+          <circle cx="154" cy="86" r="4" fill="#4fd1e8"/>
+        </g>
+        <circle cx="88" cy="146" r="3.5" fill="#34d399"/>
+        <circle cx="166" cy="154" r="3.5" fill="#8fe3f2"/>
+
+        <circle cx="120" cy="120" r="6" fill="#070b14" stroke="#4fd1e8" stroke-width="2"/>
+        <circle cx="120" cy="120" r="2" fill="#4fd1e8"/>
+
+        <rect x="22" y="194" width="196" height="22" rx="8" fill="#0d1422" fill-opacity=".9" stroke="#1e2d47"/>
+        <circle cx="34" cy="205" r="3" fill="#34d399"/>
+        <text x="44" y="209" fill="#8fe3f2" font-size="9.5" font-family="Sora, Manrope, sans-serif" font-weight="700" letter-spacing="0.8">SP · ABCD · LITORAL ATIVO</text>
       </g>`;
   }
 
@@ -285,7 +339,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   function renderChips() {
     const chip = (attr, v, l, on) => `<button type="button" ${attr}="${v}" aria-pressed="${on}" class="text-xs font-semibold px-3 py-1.5 rounded-full border transition ${on ? 'bg-rx-500 text-ink border-rx-500' : 'border-line text-slate-300 hover:border-rx-500/60'}">${l}</button>`;
     $('#chips').innerHTML =
-      [['all', 'Tudo'], ['Concurso', 'Concursos'], ['Vaga', 'Vagas']].map(([v, l]) => chip('data-tipo', v, l, state.tipo === v)).join('') +
+      [['all', 'Tudo'], ['Vaga', 'Vagas'], ['Estágio', 'Estágios'], ['Concurso', 'Concursos']].map(([v, l]) => chip('data-tipo', v, l, state.tipo === v)).join('') +
       '<span class="w-px h-5 bg-line mx-1" aria-hidden="true"></span>' +
       [['all', 'Qualquer situação'], ...STATUS.map(x => [x, x])].map(([v, l]) => chip('data-status', v, l, state.status === v)).join('') +
       `<button type="button" data-fav-filter aria-pressed="${state.onlyFav}" class="ml-auto text-xs font-semibold px-3 py-1.5 rounded-full border transition ${state.onlyFav ? 'bg-amber-400 text-ink border-amber-400' : 'border-line text-slate-300 hover:border-amber-400/60'}">★ Só favoritos</button>`;
@@ -312,7 +366,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
         <h3 class="font-display font-bold leading-snug">${esc(i.orgao)}</h3>
         <p class="text-sm text-rx-300 mt-1">${esc(i.cargo)}</p>
         <dl class="mt-4 space-y-2 text-xs border-t border-line pt-4">
-          ${[['Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', REGION_LABEL[i.regiao] || i.regiao, ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
+          ${[['Fonte / Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', REGION_LABEL[i.regiao] || i.regiao, ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
             .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-500 shrink-0">${k}</dt><dd class="font-semibold text-right ${c}">${esc(v || 'Não informado')}</dd></div>`).join('')}
         </dl>
         <div class="mt-auto pt-4 flex items-center justify-between">
@@ -361,19 +415,17 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
 
   function showScan() {
     const ts = Math.max(load(SCAN, 0) || 0, state.remoteTs || 0);
-    $('#lastScan').textContent = ts ? 'Atualizado em ' + new Date(ts).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : 'Sem busca ainda. Configure a chave para atualizar sozinho.';
+    $('#lastScan').textContent = ts ? 'Atualizado em ' + new Date(ts).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : 'Radar automático ativo · Configure chave para busca manual.';
   }
 
-  const TTL = 6 * 3600e3, DAY = 864e5;
+  const TTL = 24 * 3600e3, DAY = 864e5;
   const expired = i => !!i.encerra && i.encerra < todayLocal();
   const isNovo = i => !!i.primeiro && Date.now() - i.primeiro < 3 * DAY;
   const prazoTxt = i => { const d = i.encerra ? i.encerra.split('-').reverse().slice(0, 2).join('/') : ''; return [i.prazo, d && 'até ' + d].filter(Boolean).join(' – '); };
 
-  const PROMPT = () => `Hoje é ${new Date().toLocaleDateString('pt-BR')}. Pesquise na web oportunidades ATIVAS HOJE para Tecnólogo em Radiologia ou Técnico em Radiologia (inclui tomografia, ressonância e radiodiagnóstico) em São Paulo capital, Grande ABCD (Santo André, São Bernardo, São Caetano, Diadema, Mauá, Ribeirão Pires, Rio Grande da Serra) e Litoral Paulista (Baixada Santista e Litoral Norte).
-Inclua dois tipos: "Concurso" (concursos públicos e processos seletivos com edital) e "Vaga" (vagas de emprego em hospitais, clínicas e laboratórios, em Gupy, Vagas.com, Indeed, InfoJobs, LinkedIn e páginas de carreira).
-Inclua só o que está com inscrições abertas, em andamento ou com edital previsto confirmado. Exclua tudo que já encerrou.
-Responda SOMENTE com um array JSON válido, sem markdown. Chaves de cada item: "tipo" ("Concurso" ou "Vaga"), "orgao", "cargo", "banca" (banca ou plataforma), "salario", "regiao" ("Capital", "ABCD" ou "Litoral"), "prazo", "encerra" (fim das inscrições em AAAA-MM-DD, ou "" se desconhecido), "status" ("Aberto", "Andamento", "Previsto" ou "Monitoramento") e "link" (URL da publicação; "" se não achar).
-Não invente dados. Se nada for encontrado, responda [].`;
+  const PROMPT = () => `Hoje é ${new Date().toLocaleDateString('pt-BR')}. Pesquise na web oportunidades ATIVAS para Tecnólogo em Radiologia, Técnico em Radiologia ou Estágio em Radiologia em São Paulo capital, Grande ABCD e Litoral Paulista (LinkedIn, Indeed, Gupy, Vagas.com, InfoJobs, CIEE e editais).
+Responda SOMENTE com um array JSON válido, sem markdown. Chaves: "tipo" ("Concurso", "Vaga" ou "Estágio"), "orgao", "cargo", "banca", "salario", "regiao" ("Capital", "ABCD" ou "Litoral"), "prazo", "encerra" (AAAA-MM-DD ou ""), "status" ("Aberto", "Andamento", "Previsto" ou "Monitoramento") e "link".
+Se nada for encontrado, responda [].`;
 
   function parseItems(text) {
     const a = text.indexOf('['), b = text.lastIndexOf(']');
@@ -381,7 +433,7 @@ Não invente dados. Se nada for encontrado, responda [].`;
     const arr = JSON.parse(text.slice(a, b + 1));
     if (!Array.isArray(arr)) throw new Error('Resposta inválida da IA.');
     return arr.filter(x => x && x.orgao && x.cargo).map(x => {
-      const tipo = x.tipo === 'Vaga' ? 'Vaga' : 'Concurso';
+      const tipo = ['Vaga', 'Estágio', 'Concurso'].includes(x.tipo) ? x.tipo : 'Concurso';
       return {
         id: 'ia-' + norm(tipo + x.orgao + x.cargo).replace(/[^a-z0-9]+/g, '-').slice(0, 70), tipo,
         orgao: String(x.orgao).slice(0, 140), cargo: String(x.cargo).slice(0, 160),
@@ -416,7 +468,7 @@ Não invente dados. Se nada for encontrado, responda [].`;
       if (!res.ok) {
         const m = data?.error?.message || '';
         throw new Error(res.status === 400 || res.status === 403 ? 'Chave de API inválida ou sem permissão. Confira no botão do topo.' :
-          res.status === 429 ? 'Limite de uso da API atingido. Aguarde alguns minutos.' : (m || `Erro ${res.status} ao consultar o Gemini.`));
+          res.status === 429 ? 'Limite de uso da API atingido. Aguarde a renovação da cota.' : (m || `Erro ${res.status} ao consultar o Gemini.`));
       }
       const found = parseItems((data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join(''));
       const now = Date.now(), prev = new Map(state.live.map(i => [i.id, i]));
@@ -447,7 +499,7 @@ Não invente dados. Se nada for encontrado, responda [].`;
       state.remote = (d.itens || []).filter(x => x && x.id && x.orgao && x.cargo).map(x => ({ ...x, link: safeUrl(x.link), ia: true }));
       state.remoteTs = Number(d.atualizado) || 0;
       showScan(); render();
-    } catch { /* sem data.json: segue só com a busca do navegador */ }
+    } catch {}
   }
 
   const stale = () => Date.now() - (load(SCAN, 0) || 0) > TTL;
