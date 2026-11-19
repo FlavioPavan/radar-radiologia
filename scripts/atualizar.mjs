@@ -7,7 +7,11 @@ if (!key) {
   throw new Error('Secret GEMINI_API_KEY ausente em Settings > Secrets and variables > Actions.');
 }
 
-const MODEL = 'gemini-3.8-flash';
+// No plano gratuito, a busca no Google (grounding) só tem cota para Gemini 2.x.
+// Para Gemini 3 em diante a cota gratuita de busca é 0 (erro 429 em toda execução).
+// Tenta o primeiro modelo; se der cota/indisponível, tenta o próximo.
+const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+let modeloUsado = '';
 const REG = ['Capital', 'ABCD', 'Litoral'];
 const ST = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
 const TIPOS = ['Concurso', 'Vaga', 'Estágio'];
@@ -92,7 +96,7 @@ function carregarBase() {
   }
 }
 
-async function buscarGemini() {
+async function buscarGemini(MODEL) {
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), 65_000);
 
@@ -136,26 +140,35 @@ const anterior = carregarBase();
 const ativosAnteriores = anterior.itens.filter((i) => !i?.encerra || i.encerra >= hoje);
 
 let rawItens = null;
-try {
-  rawItens = await buscarGemini();
-} catch (err) {
-  console.warn(`Falha na consulta Gemini: ${err.message}`);
-  const temporario =
-    err.status === 429 ||
-    (typeof err.status === 'number' && err.status >= 500) ||
-    err.name === 'AbortError' ||
-    String(err.message).includes('429');
-
-  if (temporario) {
-    console.warn('Limite ou instabilidade temporária. Mantendo data.json anterior sem falhar o workflow.');
-    writeFileSync(
-      'data.json',
-      JSON.stringify({ atualizado: anterior.atualizado, itens: ativosAnteriores }, null, 2) + '\n',
-      'utf8'
-    );
-    process.exit(0);
+let ultimoErro = null;
+for (const m of MODELS) {
+  try {
+    rawItens = await buscarGemini(m);
+    modeloUsado = m;
+    console.log(`Consulta feita com ${m}.`);
+    break;
+  } catch (err) {
+    ultimoErro = err;
+    console.warn(`Falha com ${m}: ${err.message}`);
+    const tentarProximo =
+      err.status === 429 ||
+      err.status === 404 ||
+      (typeof err.status === 'number' && err.status >= 500) ||
+      err.name === 'AbortError';
+    if (!tentarProximo) throw err;
   }
-  throw err;
+}
+
+if (!rawItens) {
+  // Mantém os dados anteriores, mas FALHA o workflow para o problema aparecer
+  // em vermelho na aba Actions (antes o erro ficava escondido como "sucesso").
+  writeFileSync(
+    'data.json',
+    JSON.stringify({ ...anterior, atualizado: anterior.atualizado, itens: ativosAnteriores }, null, 2) + '\n',
+    'utf8'
+  );
+  console.error('Nenhum modelo respondeu. Veja a cota em https://aistudio.google.com/rate-limit');
+  throw ultimoErro;
 }
 
 const agora = Date.now();
@@ -215,7 +228,7 @@ const itens = [...frescos, ...retidos];
 
 writeFileSync(
   'data.json',
-  JSON.stringify({ atualizado: agora, itens }, null, 2) + '\n',
+  JSON.stringify({ atualizado: agora, modelo: modeloUsado, itens }, null, 2) + '\n',
   'utf8'
 );
 
