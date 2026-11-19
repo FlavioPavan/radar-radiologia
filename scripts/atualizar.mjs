@@ -1,5 +1,5 @@
 // Pipeline diário (custo zero): busca vagas, estágios e concursos via Gemini + Google Search,
-// deduplica e grava data.json. Em caso de 429 (cota), preserva o data.json atual sem falhar.
+// deduplica e grava data.json. Em caso de 429 ou instabilidade temporária, preserva data.json.
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const key = process.env.GEMINI_API_KEY?.trim();
@@ -7,6 +7,7 @@ if (!key) {
   throw new Error('Secret GEMINI_API_KEY ausente em Settings > Secrets and variables > Actions.');
 }
 
+const MODEL = 'gemini-2.5-flash';
 const REG = ['Capital', 'ABCD', 'Litoral'];
 const ST = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
 const TIPOS = ['Concurso', 'Vaga', 'Estágio'];
@@ -97,7 +98,7 @@ async function buscarGemini() {
 
   try {
     const res = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent',
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
       {
         method: 'POST',
         signal: ac.signal,
@@ -139,8 +140,14 @@ try {
   rawItens = await buscarGemini();
 } catch (err) {
   console.warn(`Falha na consulta Gemini: ${err.message}`);
-  if (err.status === 429 || String(err.message).includes('429')) {
-    console.warn('Cota (429) atingida. Mantendo data.json anterior sem falhar o workflow.');
+  const temporario =
+    err.status === 429 ||
+    (typeof err.status === 'number' && err.status >= 500) ||
+    err.name === 'AbortError' ||
+    String(err.message).includes('429');
+
+  if (temporario) {
+    console.warn('Limite ou instabilidade temporária. Mantendo data.json anterior sem falhar o workflow.');
     writeFileSync(
       'data.json',
       JSON.stringify({ atualizado: anterior.atualizado, itens: ativosAnteriores }, null, 2) + '\n',
