@@ -211,6 +211,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   'use strict';
   const $ = s => document.querySelector(s);
   const KEY = 'gemini_api_key_radar', FAV = 'radar_favs_v2', LIVE = 'radar_live_v2', SCAN = 'radar_scan_v2';
+  const MODEL = 'gemini-2.5-flash';
   const STATUS = ['Aberto', 'Andamento', 'Previsto', 'Monitoramento'];
   const BADGE = {
     Aberto: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
@@ -459,7 +460,7 @@ Se nada for encontrado, responda [].`;
 
     const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 90000);
     try {
-      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent', {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
         method: 'POST', signal: ctrl.signal,
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({ contents: [{ parts: [{ text: PROMPT() }] }], tools: [{ googleSearch: {} }], generationConfig: { temperature: 0.1 } })
