@@ -236,6 +236,14 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     return `<span class="text-xs font-bold px-2.5 py-1 rounded-lg border backdrop-blur ${cls}">${txt}</span>`;
   }
 
+  // Evita repetição como "São Paulo · São Paulo capital"
+  const regiaoTxt = i => {
+    const label = i.regiao === 'Outras' ? '' : (REGION_LABEL[i.regiao] || i.regiao || '');
+    const cidade = String(i.cidade || '').trim();
+    const repetida = cidade && norm(label).includes(norm(cidade));
+    return [repetida ? '' : cidade, label].filter(Boolean).join(' · ') || REGION_LABEL[i.regiao] || '';
+  };
+
   const prazoTxt = i => {
     const d = i.encerra ? i.encerra.split('-').reverse().slice(0, 2).join('/') : '';
     return [i.prazo, d && 'até ' + d].filter(Boolean).join(' – ');
@@ -386,8 +394,8 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
         <h3 class="font-display font-bold leading-snug">${esc(i.orgao)}</h3>
         <p class="text-sm text-rx-300 mt-1">${esc(i.cargo)}</p>
         <dl class="mt-4 space-y-2 text-sm border-t border-line pt-4">
-          ${[['Fonte / Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', [i.cidade, i.regiao === 'Outras' ? '' : REGION_LABEL[i.regiao]].filter(Boolean).join(' · ') || REGION_LABEL[i.regiao] || i.regiao, i.regiao === 'ABCD' ? 'text-rx-300' : ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
-            .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-400 shrink-0">${k}</dt><dd class="font-semibold text-right ${c}">${esc(v || 'Não informado')}</dd></div>`).join('')}
+          ${[['Fonte / Banca', i.banca, ''], ['Salário', i.salario, 'text-emerald-400'], ['Região', regiaoTxt(i), i.regiao === 'ABCD' ? 'text-rx-300' : ''], ['Prazo', prazoTxt(i), 'text-amber-300']]
+            .map(([k, v, c]) => `<div class="flex justify-between gap-4"><dt class="text-slate-400 shrink-0">${k}</dt><dd class="text-right ${v ? 'font-semibold ' + c : 'text-slate-400'}">${esc(v || 'Não informado')}</dd></div>`).join('')}
         </dl>
         <div class="mt-auto pt-4 flex items-center justify-between gap-2">
           ${i.ia ? '<span class="text-xs text-slate-400">Coletado automaticamente. Confira no site oficial.</span>' : '<span></span>'}
