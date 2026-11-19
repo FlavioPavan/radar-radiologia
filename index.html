@@ -6,11 +6,11 @@
 <meta name="description" content="Monitor de concursos e processos seletivos para Tecnólogo e Técnico em Radiologia em São Paulo, Grande ABCD e Litoral.">
 <meta name="theme-color" content="#070b14">
 <title>Radar Radiologia SP – Concursos e Vagas</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070b14'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%234fd1e8' stroke-width='2'/%3E%3Cpath d='M16 16 24 10' stroke='%234fd1e8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
-<link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
-<link href="[https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap)" rel="stylesheet">
-<script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23070b14'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%234fd1e8' stroke-width='2'/%3E%3Cpath d='M16 16 24 10' stroke='%234fd1e8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = { darkMode: 'class', theme: { extend: {
   colors: { ink: '#070b14', panel: '#0d1422', line: '#1a2438', rx: { 300: '#8fe3f2', 400: '#4fd1e8', 500: '#22b8d3', 600: '#0e93ad' } },
@@ -26,8 +26,75 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   .scanline { animation: scan 5s ease-in-out infinite; }
   .skeleton { background: linear-gradient(90deg,#0d1422 25%,#16213a 50%,#0d1422 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
   @keyframes sh { to { background-position: -200% 0; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .animate-spin { animation: spin 1s linear infinite; }
   @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; } }
+
+  /* Fallback nativo caso o CDN do Tailwind falhe ou seja bloqueado */
+  html.no-tw, html.no-tw body { margin: 0; padding: 0; background: #070b14; color: #f1f5f9; font-family: 'Manrope', system-ui, -apple-system, sans-serif; line-height: 1.5; }
+  html.no-tw *, html.no-tw *::before, html.no-tw *::after { box-sizing: border-box; }
+  html.no-tw .font-display { font-family: 'Sora', 'Manrope', system-ui, sans-serif; }
+  html.no-tw .hidden { display: none !important; }
+  html.no-tw header { position: sticky; top: 0; z-index: 30; background: rgba(13, 20, 34, 0.95); border-bottom: 1px solid #1a2438; }
+  html.no-tw header > div { max-width: 1280px; margin: 0 auto; padding: 0 1rem; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  html.no-tw header > div > div:first-child { display: flex; align-items: center; gap: 12px; }
+  html.no-tw header h1 { margin: 0; font-size: 18px; font-weight: 700; }
+  html.no-tw header p { margin: 0; font-size: 12px; color: #94a3b8; }
+  html.no-tw svg { max-width: 100%; }
+  html.no-tw .w-6.h-6, html.no-tw svg.w-6.h-6 { width: 24px; height: 24px; flex-shrink: 0; }
+  html.no-tw .w-5.h-5, html.no-tw svg.w-5.h-5 { width: 20px; height: 20px; flex-shrink: 0; }
+  html.no-tw .w-4.h-4, html.no-tw svg.w-4.h-4 { width: 16px; height: 16px; flex-shrink: 0; }
+  html.no-tw .w-3\.5.h-3\.5, html.no-tw svg.w-3\.5.h-3\.5 { width: 14px; height: 14px; flex-shrink: 0; }
+  html.no-tw .w-2.h-2 { width: 8px; height: 8px; border-radius: 999px; display: inline-block; flex-shrink: 0; }
+  html.no-tw .bg-emerald-500 { background: #10b981; }
+  html.no-tw .bg-amber-500 { background: #f59e0b; }
+  html.no-tw main { max-width: 1280px; margin: 0 auto; padding: 28px 16px; width: 100%; }
+  html.no-tw main > * + * { margin-top: 24px; }
+  html.no-tw section { background: #0d1422; border: 1px solid #1a2438; border-radius: 20px; padding: 20px; }
+  html.no-tw section.rounded-3xl { padding: 0; overflow: hidden; background: linear-gradient(135deg, #0d1422 0%, #0a1830 55%, #06222c 100%); }
+  html.no-tw .grid { display: grid; gap: 16px; }
+  @media (min-width: 640px) { html.no-tw .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 768px) { html.no-tw .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } html.no-tw .md\:grid-cols-\[1fr_300px\] { grid-template-columns: 1fr 300px; } }
+  @media (min-width: 1280px) { html.no-tw .xl\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  html.no-tw .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+  html.no-tw dl.grid-cols-3 { border-top: 1px solid #1a2438; background: rgba(7, 11, 20, 0.45); text-align: center; margin: 0; }
+  html.no-tw dl.grid-cols-3 > div { padding: 14px 8px; }
+  html.no-tw dl.grid-cols-3 > div + div { border-left: 1px solid #1a2438; }
+  html.no-tw dl.grid-cols-3 dd { margin: 0; font-size: 22px; font-weight: 700; }
+  html.no-tw dl.grid-cols-3 dt { margin-top: 2px; font-size: 12px; color: #94a3b8; }
+  html.no-tw label { display: block; font-size: 12px; font-weight: 600; color: #94a3b8; }
+  html.no-tw input, html.no-tw select { width: 100%; margin-top: 6px; background: #070b14; color: #f1f5f9; border: 1px solid #1a2438; border-radius: 12px; padding: 10px 12px; font-size: 14px; font-family: inherit; }
+  html.no-tw button { font-family: inherit; cursor: pointer; }
+  html.no-tw #keyBtn { background: #162138; color: #f1f5f9; border: 1px solid #243352; border-radius: 12px; padding: 8px 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+  html.no-tw #searchBtn { background: #22b8d3; color: #070b14; border: 0; border-radius: 12px; padding: 12px 20px; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+  html.no-tw #chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
+  html.no-tw #chips button { background: transparent; color: #cbd5e1; border: 1px solid #1a2438; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 600; }
+  html.no-tw #chips button[aria-pressed="true"] { background: #22b8d3; color: #070b14; border-color: #22b8d3; }
+  html.no-tw article { background: #0d1422; border: 1px solid #1a2438; border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+  html.no-tw article > div:first-child { position: relative; height: 96px; }
+  html.no-tw article > div:last-child { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+  html.no-tw article h3 { margin: 8px 0 4px; font-size: 16px; font-weight: 700; }
+  html.no-tw article p { margin: 0 0 12px; font-size: 13px; color: #8fe3f2; }
+  html.no-tw article dl { margin: 0; border-top: 1px solid #1a2438; padding-top: 12px; font-size: 12px; }
+  html.no-tw article dl > div { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+  html.no-tw article dt { color: #64748b; }
+  html.no-tw article dd { margin: 0; font-weight: 600; text-align: right; }
+  html.no-tw article a { color: #4fd1e8; font-size: 12px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+  html.no-tw #xray { width: 220px; height: 220px; margin: 0 auto; display: block; }
+  html.no-tw footer { border-top: 1px solid #1a2438; background: #0d1422; padding: 24px 16px; text-align: center; font-size: 12px; color: #64748b; margin-top: 40px; }
+  html.no-tw dialog { background: #0d1422; color: #f1f5f9; border: 1px solid #1a2438; border-radius: 20px; padding: 24px; max-width: 440px; width: calc(100% - 32px); }
 </style>
+<script>
+(() => {
+  const probe = document.createElement('div');
+  probe.className = 'hidden';
+  document.documentElement.appendChild(probe);
+  if (getComputedStyle(probe).display !== 'none') {
+    document.documentElement.classList.add('no-tw');
+  }
+  probe.remove();
+})();
+</script>
 </head>
 <body class="bg-ink text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-rx-500 selection:text-ink">
 
@@ -114,7 +181,7 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
     <label class="block text-xs font-semibold text-slate-300">Chave de API
       <input id="keyInput" type="password" autocomplete="off" placeholder="AIzaSy..." class="mt-1 w-full bg-ink border border-line rounded-xl px-3 py-2.5 text-sm focus:border-rx-500 focus:outline-none">
     </label>
-    <p class="text-xs text-slate-500">Gere uma chave gratuita em <a class="text-rx-400 underline" target="_blank" rel="noopener noreferrer" href="[https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)">aistudio.google.com</a>.</p>
+    <p class="text-xs text-slate-500">Gere uma chave gratuita em <a class="text-rx-400 underline" target="_blank" rel="noopener noreferrer" href="https://aistudio.google.com/app/apikey">aistudio.google.com</a>.</p>
     <div class="flex items-center justify-between pt-2">
       <button type="button" id="keyClear" class="text-xs text-rose-400 hover:text-rose-300 px-2 py-2">Remover chave</button>
       <button type="submit" value="save" class="bg-rx-500 hover:bg-rx-400 text-ink text-sm font-bold px-5 py-2.5 rounded-xl transition">Salvar chave</button>
@@ -137,10 +204,10 @@ tailwind.config = { darkMode: 'class', theme: { extend: {
   const REGION_LABEL = { Capital: 'São Paulo capital', ABCD: 'Grande ABCD', Litoral: 'Litoral paulista' };
 
   const BASE = [
-    { id: 'usp-fuvest', orgao: 'Universidade de São Paulo (USP)', cargo: 'Técnico em Radiologia (Odontologia / Veterinária)', banca: 'FUVEST', salario: 'R$ 6.027,72 (CLT)', regiao: 'Capital', prazo: 'Em andamento (provas práticas)', status: 'Andamento', link: '[https://www.fuvest.br/tecnico-radiologia/](https://www.fuvest.br/tecnico-radiologia/)' },
-    { id: 'ebserh-hsp', orgao: 'EBSERH / Hospital São Paulo (UNIFESP)', cargo: 'Tecnólogo / Técnico em Radiologia', banca: 'IBFC / FGV', salario: 'R$ 4.500,00 a R$ 6.500,00 (média)', regiao: 'Capital', prazo: 'Cadastro reserva, alerta permanente', status: 'Monitoramento', link: '[https://www.ebserh.gov.br](https://www.ebserh.gov.br)' },
-    { id: 'fidi-iamspe', tipo: 'Vaga', orgao: 'FIDI / IAMSPE (Vila Mariana)', cargo: 'Tecnólogo(a) em Radiologia – Ressonância', banca: 'Seleção interna / Gupy', salario: 'Compatível com o mercado + benefícios', regiao: 'Capital', prazo: 'Aberto para vagas e estágio', status: 'Aberto', link: '[https://fidi.gupy.io/](https://fidi.gupy.io/)' },
-    { id: 'abcd-prefeituras', orgao: 'Prefeituras do Grande ABCD (Santo André, SBC, Diadema)', cargo: 'Técnico / Tecnólogo em Radiologia municipal', banca: 'VUNESP / IBAM', salario: 'R$ 3.300,00 a R$ 5.200,00', regiao: 'ABCD', prazo: 'Editais previstos para o semestre', status: 'Previsto', link: '[https://www.vunesp.com.br](https://www.vunesp.com.br)' }
+    { id: 'usp-fuvest', orgao: 'Universidade de São Paulo (USP)', cargo: 'Técnico em Radiologia (Odontologia / Veterinária)', banca: 'FUVEST', salario: 'R$ 6.027,72 (CLT)', regiao: 'Capital', prazo: 'Em andamento (provas práticas)', status: 'Andamento', link: 'https://www.fuvest.br/tecnico-radiologia/' },
+    { id: 'ebserh-hsp', orgao: 'EBSERH / Hospital São Paulo (UNIFESP)', cargo: 'Tecnólogo / Técnico em Radiologia', banca: 'IBFC / FGV', salario: 'R$ 4.500,00 a R$ 6.500,00 (média)', regiao: 'Capital', prazo: 'Cadastro reserva, alerta permanente', status: 'Monitoramento', link: 'https://www.ebserh.gov.br' },
+    { id: 'fidi-iamspe', tipo: 'Vaga', orgao: 'FIDI / IAMSPE (Vila Mariana)', cargo: 'Tecnólogo(a) em Radiologia – Ressonância', banca: 'Seleção interna / Gupy', salario: 'Compatível com o mercado + benefícios', regiao: 'Capital', prazo: 'Aberto para vagas e estágio', status: 'Aberto', link: 'https://fidi.gupy.io/' },
+    { id: 'abcd-prefeituras', orgao: 'Prefeituras do Grande ABCD (Santo André, SBC, Diadema)', cargo: 'Técnico / Tecnólogo em Radiologia municipal', banca: 'VUNESP / IBAM', salario: 'R$ 3.300,00 a R$ 5.200,00', regiao: 'ABCD', prazo: 'Editais previstos para o semestre', status: 'Previsto', link: 'https://www.vunesp.com.br' }
   ];
 
   const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
@@ -340,7 +407,7 @@ Não invente dados. Se nada for encontrado, responda [].`;
 
     const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 90000);
     try {
-      const res = await fetch('[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent)', {
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
         method: 'POST', signal: ctrl.signal,
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
         body: JSON.stringify({ contents: [{ parts: [{ text: PROMPT() }] }], tools: [{ googleSearch: {} }], generationConfig: { temperature: 0.1 } })
