@@ -1,7 +1,23 @@
 {
-  "atualizado": 1795371786245,
+  "atualizado": 1795473019724,
   "fonte": "Gupy + PCI Concursos",
   "itens": [
+    {
+      "id": "auto-vaga-hapvidandi-tecnico-radiologia-sp-pronto-atendimento-barretos-raio-x-barreto",
+      "tipo": "Vaga",
+      "orgao": "hapvidandi",
+      "cargo": "Tecnico Radiologia - SP - PRONTO ATENDIMENTO BARRETOS -  RAIO-X",
+      "banca": "Gupy",
+      "salario": "",
+      "regiao": "Outras",
+      "cidade": "Barretos",
+      "prazo": "Inscrições abertas",
+      "encerra": "2027-01-22",
+      "status": "Aberto",
+      "link": "https://hapvidandi.gupy.io/job/eyJqb2JJZCI6MTI5Mjg3NDMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
+      "primeiro": 1795473019724,
+      "visto": 1795473019724
+    },
     {
       "id": "auto-vaga-fidi-tecnologo-a-em-radiologia-ressonancia-iamspe-sao-paulo",
       "tipo": "Vaga",
@@ -16,7 +32,7 @@
       "status": "Aberto",
       "link": "https://fidi.gupy.io/job/eyJqb2JJZCI6MTI4MjcwNTAsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-fidi-tecnico-a-em-radiologia-estivadores-santos",
@@ -32,7 +48,7 @@
       "status": "Aberto",
       "link": "https://fidi.gupy.io/job/eyJqb2JJZCI6MTI4NTE3OTIsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-grupo-diagmed-unidade-indaiatuba-tecnico-radiologia-intermitente-indaiatuba",
@@ -48,7 +64,7 @@
       "status": "Aberto",
       "link": "https://diagmedindaiatuba.gupy.io/job/eyJqb2JJZCI6MTI4MDQyOTAsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-hapvidandi-tecnico-radiologia-sao-jose-rio-preto-sp-sao-jose-do-rio-preto",
@@ -64,7 +80,7 @@
       "status": "Aberto",
       "link": "https://hapvidandi.gupy.io/job/eyJqb2JJZCI6MTI4NTQ3MTEsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-fidi-tecnico-a-em-radiologia-santos-santos",
@@ -80,7 +96,7 @@
       "status": "Aberto",
       "link": "https://fidi.gupy.io/job/eyJqb2JJZCI6MTI3OTU4MzIsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-sadt-radiologia-maternidade-star-sao-paulo",
@@ -96,7 +112,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTI3NDA0NTcsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-grupo-diagmed-unidade-sumare-tecnico-radiologia-intermitente-sumare-sumare",
@@ -112,7 +128,7 @@
       "status": "Aberto",
       "link": "https://diagmedsumare.gupy.io/job/eyJqb2JJZCI6MTE0MDY1MjgsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-analia-franco-sao-paulo",
@@ -128,7 +144,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTI1NTMyNzksInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-sadt-itaim-sao-paulo",
@@ -144,7 +160,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTE5NzYwNjYsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-hospital-vila-nova-star-sao-paulo",
@@ -160,7 +176,23 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTE5NjkyOTMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
+    },
+    {
+      "id": "auto-vaga-hapvidandi-tecnologo-saude-sp-hsv-hospital-salvalus-tomografia-sao-paulo",
+      "tipo": "Vaga",
+      "orgao": "hapvidandi",
+      "cargo": "TECNOLOGO SAUDE - SP - HSV - HOSPITAL SALVALUS - TOMOGRAFIA",
+      "banca": "Gupy",
+      "salario": "",
+      "regiao": "Capital",
+      "cidade": "São Paulo",
+      "prazo": "Inscrições abertas",
+      "encerra": "2027-01-22",
+      "status": "Aberto",
+      "link": "https://hapvidandi.gupy.io/job/eyJqb2JJZCI6MTI5Mjc1MTEsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
+      "primeiro": 1795473019724,
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-vagas-grupo-sabin-tecnico-em-ressonancia-ressonancia-e-tomografia-osasco",
@@ -176,7 +208,7 @@
       "status": "Aberto",
       "link": "https://gruposabin.gupy.io/job/eyJqb2JJZCI6MTIzMzMzMjksInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-a-de-enfermagem-setores-sadt-ressonancia-magnetica-endosc",
@@ -192,7 +224,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTI4MTYyNjksInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-concurso-prefeitura-de-jandira-tecnico-em-radiologia-jandira",
@@ -208,7 +240,7 @@
       "status": "Aberto",
       "link": "https://www.pciconcursos.com.br/noticias/prefeitura-de-jandira-sp-abre-tres-concursos-publicos-para-diversos-cargos",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     },
     {
       "id": "auto-concurso-prefeitura-de-pirapozinho-tecnico-em-radiologia-pirapozinho",
@@ -224,7 +256,7 @@
       "status": "Aberto",
       "link": "https://www.pciconcursos.com.br/noticias/prefeitura-de-pirapozinho-sp-abre-concurso-publico-para-formacao-de-cadastro-de-reserva",
       "primeiro": 1795112407728,
-      "visto": 1795371786245
+      "visto": 1795473019724
     }
   ]
 }
