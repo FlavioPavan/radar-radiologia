@@ -1,7 +1,39 @@
 {
-  "atualizado": 1795473019724,
+  "atualizado": 1795554234762,
   "fonte": "Gupy + PCI Concursos",
   "itens": [
+    {
+      "id": "auto-vaga-hapvidandi-tecnico-enfermagem-hospitalar-radiologia-bauru-sp-bauru",
+      "tipo": "Vaga",
+      "orgao": "hapvidandi",
+      "cargo": "TECNICO ENFERMAGEM HOSPITALAR - RADIOLOGIA -  BAURU SP ",
+      "banca": "Gupy",
+      "salario": "",
+      "regiao": "Outras",
+      "cidade": "Bauru",
+      "prazo": "Inscrições abertas",
+      "encerra": "2027-01-16",
+      "status": "Aberto",
+      "link": "https://hapvidandi.gupy.io/job/eyJqb2JJZCI6MTI5MzcxODQsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
+      "primeiro": 1795554234762,
+      "visto": 1795554234762
+    },
+    {
+      "id": "auto-vaga-spx-imagem-tecnico-em-radiologia-hospital-municipal-adib-jatene-zona-norte-",
+      "tipo": "Vaga",
+      "orgao": "SPX Imagem",
+      "cargo": "Técnico em Radiologia | Hospital Municipal Adib Jatene | Zona Norte - SP",
+      "banca": "Gupy",
+      "salario": "",
+      "regiao": "Capital",
+      "cidade": "São Paulo",
+      "prazo": "Inscrições abertas",
+      "encerra": "2026-12-10",
+      "status": "Aberto",
+      "link": "https://spx.gupy.io/job/eyJqb2JJZCI6MTI5MTcxNDMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
+      "primeiro": 1795554234762,
+      "visto": 1795554234762
+    },
     {
       "id": "auto-vaga-hapvidandi-tecnico-radiologia-sp-pronto-atendimento-barretos-raio-x-barreto",
       "tipo": "Vaga",
@@ -16,7 +48,7 @@
       "status": "Aberto",
       "link": "https://hapvidandi.gupy.io/job/eyJqb2JJZCI6MTI5Mjg3NDMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795473019724,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-fidi-tecnologo-a-em-radiologia-ressonancia-iamspe-sao-paulo",
@@ -32,7 +64,7 @@
       "status": "Aberto",
       "link": "https://fidi.gupy.io/job/eyJqb2JJZCI6MTI4MjcwNTAsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-fidi-tecnico-a-em-radiologia-estivadores-santos",
@@ -48,7 +80,7 @@
       "status": "Aberto",
       "link": "https://fidi.gupy.io/job/eyJqb2JJZCI6MTI4NTE3OTIsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-grupo-diagmed-unidade-indaiatuba-tecnico-radiologia-intermitente-indaiatuba",
@@ -64,7 +96,7 @@
       "status": "Aberto",
       "link": "https://diagmedindaiatuba.gupy.io/job/eyJqb2JJZCI6MTI4MDQyOTAsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-hapvidandi-tecnico-radiologia-sao-jose-rio-preto-sp-sao-jose-do-rio-preto",
@@ -80,7 +112,7 @@
       "status": "Aberto",
       "link": "https://hapvidandi.gupy.io/job/eyJqb2JJZCI6MTI4NTQ3MTEsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-fidi-tecnico-a-em-radiologia-santos-santos",
@@ -96,7 +128,7 @@
       "status": "Aberto",
       "link": "https://fidi.gupy.io/job/eyJqb2JJZCI6MTI3OTU4MzIsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-sadt-radiologia-maternidade-star-sao-paulo",
@@ -112,7 +144,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTI3NDA0NTcsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-grupo-diagmed-unidade-sumare-tecnico-radiologia-intermitente-sumare-sumare",
@@ -128,7 +160,7 @@
       "status": "Aberto",
       "link": "https://diagmedsumare.gupy.io/job/eyJqb2JJZCI6MTE0MDY1MjgsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-analia-franco-sao-paulo",
@@ -144,7 +176,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTI1NTMyNzksInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-sadt-itaim-sao-paulo",
@@ -160,7 +192,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTE5NzYwNjYsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-de-radiologia-hospital-vila-nova-star-sao-paulo",
@@ -176,7 +208,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTE5NjkyOTMsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-hapvidandi-tecnologo-saude-sp-hsv-hospital-salvalus-tomografia-sao-paulo",
@@ -192,7 +224,7 @@
       "status": "Aberto",
       "link": "https://hapvidandi.gupy.io/job/eyJqb2JJZCI6MTI5Mjc1MTEsInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795473019724,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-vagas-grupo-sabin-tecnico-em-ressonancia-ressonancia-e-tomografia-osasco",
@@ -208,7 +240,7 @@
       "status": "Aberto",
       "link": "https://gruposabin.gupy.io/job/eyJqb2JJZCI6MTIzMzMzMjksInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-vaga-rede-d-or-tecnico-a-de-enfermagem-setores-sadt-ressonancia-magnetica-endosc",
@@ -224,7 +256,7 @@
       "status": "Aberto",
       "link": "https://rededor.gupy.io/job/eyJqb2JJZCI6MTI4MTYyNjksInNvdXJjZSI6Imd1cHlfcG9ydGFsIn0=",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
     },
     {
       "id": "auto-concurso-prefeitura-de-jandira-tecnico-em-radiologia-jandira",
@@ -240,7 +272,39 @@
       "status": "Aberto",
       "link": "https://www.pciconcursos.com.br/noticias/prefeitura-de-jandira-sp-abre-tres-concursos-publicos-para-diversos-cargos",
       "primeiro": 1795112407728,
-      "visto": 1795473019724
+      "visto": 1795554234762
+    },
+    {
+      "id": "auto-concurso-prefeitura-de-itupeva-tecnico-em-radiologia-itupeva",
+      "tipo": "Concurso",
+      "orgao": "Prefeitura de Itupeva",
+      "cargo": "Técnico em Radiologia",
+      "banca": "PCI Concursos (ver edital)",
+      "salario": "",
+      "regiao": "Outras",
+      "cidade": "Itupeva",
+      "prazo": "Ver datas no edital",
+      "encerra": "",
+      "status": "Aberto",
+      "link": "https://www.pciconcursos.com.br/noticias/prefeitura-de-itupeva-sp-abre-concurso-com-salarios-de-ate-13289",
+      "primeiro": 1795554234762,
+      "visto": 1795554234762
+    },
+    {
+      "id": "auto-concurso-prefeitura-de-altair-tecnico-em-radiologia-altair",
+      "tipo": "Concurso",
+      "orgao": "Prefeitura de Altair",
+      "cargo": "Técnico em Radiologia",
+      "banca": "PCI Concursos (ver edital)",
+      "salario": "",
+      "regiao": "Outras",
+      "cidade": "Altair",
+      "prazo": "Ver datas no edital",
+      "encerra": "",
+      "status": "Aberto",
+      "link": "https://www.pciconcursos.com.br/noticias/prefeitura-de-altair-sp-abre-tres-editais-com-41-vagas-e-cadastro-reserva",
+      "primeiro": 1795554234762,
+      "visto": 1795554234762
     },
     {
       "id": "auto-concurso-prefeitura-de-pirapozinho-tecnico-em-radiologia-pirapozinho",
